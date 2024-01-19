@@ -31,15 +31,14 @@
 #include "ip.h"
 #include "frag.h"
 
-
 #define PAYLOAD56 56
 
-struct packet *packet(pcs *pc);
-int upv4(pcs *pc, struct packet **pkt);
-int response(struct packet *pkt, sesscb *sesscb);
-int arpResolve(pcs *pc, u_int ip, u_char *dmac);
-int host2ip(pcs *pc, const char *name, u_int *ip);
-void send4(pcs *pc, struct packet *pkt);
+struct packet *packet (pcs * pc);
+int upv4 (pcs * pc, struct packet **pkt);
+int response (struct packet *pkt, sesscb * sesscb);
+int arpResolve (pcs * pc, u_int ip, u_char * dmac);
+int host2ip (pcs * pc, const char *name, u_int * ip);
+void send4 (pcs * pc, struct packet *pkt);
 
 #endif
 

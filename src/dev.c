@@ -54,147 +54,151 @@ extern int num_pths;
 extern char *tapname;
 #endif
 
-int VRead(pcs *pc, void *buf, int len)
+int VRead (pcs * pc, void *buf, int len)
 {
 	struct sockaddr addr;
 	socklen_t size;
 	int n = 0;
 	fd_set readSet;
-	struct timeval timeout = {1, 0};
-	
-	FD_ZERO(&readSet);
-	FD_SET(pc->fd, &readSet);
-	
-	if (select(pc->fd + 1, &readSet, NULL, NULL, &timeout) <= 0)
+	struct timeval timeout = { 1, 0 };
+
+	FD_ZERO (&readSet);
+	FD_SET (pc->fd, &readSet);
+
+	if (select (pc->fd + 1, &readSet, NULL, NULL, &timeout) <= 0)
 		return 0;
-		
-	switch (devtype) {
-		case DEV_TAP:
-			n = read(pc->fd, buf, len);
-			break;
-		case DEV_UDP:
-			size = sizeof(addr);
-			n = recvfrom(pc->fd, buf, len, 0, (struct sockaddr *)&addr, &size);
-			break;
+
+	switch (devtype)
+	{
+	case DEV_TAP:
+		n = read (pc->fd, buf, len);
+		break;
+	case DEV_UDP:
+		size = sizeof (addr);
+		n = recvfrom (pc->fd, buf, len, 0, (struct sockaddr *) &addr, &size);
+		break;
 	}
 	return n;
 }
 
-int VWrite(pcs *pc, void *buf, int len)
+int VWrite (pcs * pc, void *buf, int len)
 {
 	struct sockaddr_in addr;
 	int n = 0;
 	fd_set writeSet;
-	struct timeval timeout = {1, 0};
-	
-	FD_ZERO(&writeSet);
-	FD_SET(pc->fd, &writeSet);
-	
-	if (select(pc->fd + 1, NULL, &writeSet, NULL, &timeout) <= 0)
-		return 0;
-		
-		
-	switch (devtype) {
-		case DEV_TAP:
-			n = write(pc->fd, buf, len);
-			break;
-		case DEV_UDP:
-			bzero(&addr, sizeof(addr));
-			addr.sin_family = AF_INET;
-			addr.sin_port = htons(pc->rport);
-			addr.sin_addr.s_addr = pc->rhost;
-		
-			n = sendto(pc->fd, buf, len, 0, (struct sockaddr *)&addr, sizeof(addr));
+	struct timeval timeout = { 1, 0 };
 
-			break;
+	FD_ZERO (&writeSet);
+	FD_SET (pc->fd, &writeSet);
+
+	if (select (pc->fd + 1, NULL, &writeSet, NULL, &timeout) <= 0)
+		return 0;
+
+	switch (devtype)
+	{
+	case DEV_TAP:
+		n = write (pc->fd, buf, len);
+		break;
+	case DEV_UDP:
+		bzero (&addr, sizeof (addr));
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons (pc->rport);
+		addr.sin_addr.s_addr = pc->rhost;
+
+		n = sendto (pc->fd, buf, len, 0, (struct sockaddr *) &addr, sizeof (addr));
+
+		break;
 	}
 	return n;
 }
 
-
-int open_dev(int id)
+int open_dev (int id)
 {
 	int fd = 0;
 
-	switch(devtype) {
+	switch (devtype)
+	{
 #ifdef TAP
-		case DEV_TAP:
-			fd = open_tap(id);
-			if (fd <= 0) {
-				fd = 0;
-				return 0;
-			}
-			break;
-#endif			
-		case DEV_UDP:
-			fd = open_udp(vpc[id].lport);
-			if (fd <= 0) {
-				fd = 0;
-				return 0;
-			}
-			break;
+	case DEV_TAP:
+		fd = open_tap (id);
+		if (fd <= 0)
+		{
+			fd = 0;
+			return 0;
+		}
+		break;
+#endif
+	case DEV_UDP:
+		fd = open_udp (vpc[id].lport);
+		if (fd <= 0)
+		{
+			fd = 0;
+			return 0;
+		}
+		break;
 	}
-		
+
 	return fd;
 }
 
-int open_udp(int port)
+int open_udp (int port)
 {
 	int s;
 	struct sockaddr_in addr_in;
-	
-	s = socket(AF_INET, SOCK_DGRAM, 0);
-	
-	if (s == -1) 
+
+	s = socket (AF_INET, SOCK_DGRAM, 0);
+
+	if (s == -1)
 		return 0;
-	
-	bzero(&addr_in, sizeof(addr_in));
+
+	bzero (&addr_in, sizeof (addr_in));
 	addr_in.sin_family = AF_INET;
-	addr_in.sin_addr.s_addr = htonl(INADDR_ANY);
-	addr_in.sin_port = htons(port);
-	
-	if(bind(s, (struct sockaddr *)&addr_in, sizeof(addr_in)) == -1) {
-		close(s);
+	addr_in.sin_addr.s_addr = htonl (INADDR_ANY);
+	addr_in.sin_port = htons (port);
+
+	if (bind (s, (struct sockaddr *) &addr_in, sizeof (addr_in)) == -1)
+	{
+		close (s);
 		return 0;
 	}
 	return s;
 }
 
 #ifdef TAP
-int open_tap(int id)
+int open_tap (int id)
 {
 	struct ifreq ifr;
 	int fd;
 
 	char dev[IFNAMESIZ];
-	
-	if (num_pths > 1)
-		sprintf(dev, "tap%d", id);
-	else
-		if (strlen(tapname) >= IFNAMSIZ)
-			return(-1);
-		sprintf(dev, "%s", tapname);
 
-	if ((fd = open("/dev/net/tun", O_RDWR)) < 0) {
-		return(-1);
+	if (num_pths > 1)
+		sprintf (dev, "tap%d", id);
+	else if (strlen (tapname) >= IFNAMSIZ)
+		return (-1);
+	sprintf (dev, "%s", tapname);
+
+	if ((fd = open ("/dev/net/tun", O_RDWR)) < 0)
+	{
+		return (-1);
 	}
-	memset(&ifr, 0, sizeof(ifr));
-	
+	memset (&ifr, 0, sizeof (ifr));
+
 	/*
 	 * IFF_TAP   - TAP device  
 	 * IFF_NO_PI - Do not provide packet information 
 	 *             TUNSLMODE | TUNSIFHEAD on the freebsd.
 	 */
 	ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-	strncpy(ifr.ifr_name, dev, IFNAMESIZ);
+	strncpy (ifr.ifr_name, dev, IFNAMESIZ);
 
-	if (ioctl(fd, TUNSETIFF, (void *) &ifr) < 0) {
-		close(fd);
-		return(-1);
+	if (ioctl (fd, TUNSETIFF, (void *) &ifr) < 0)
+	{
+		close (fd);
+		return (-1);
 	}
-	return(fd);
+	return (fd);
 }
 #endif
 
 /* end of file */
-

@@ -67,125 +67,130 @@ static pid_t fdtty_pid;
 static int daemon_port;
 
 #ifdef cygwin
-BOOL WINAPI handler_routine(DWORD e);
+BOOL WINAPI handler_routine (DWORD e);
 #endif
 
-static void daemon_proc(int sock, int fdtty);
-static void sig_usr1(int sig);
-static void sig_usr2(int sig);
-static void sig_quit(int sig);
-static void sig_term(int sig);
-static void sig_int(int sig);
-static int set_telnet_mode(int s);
-static void set_nonblock(int fd);
-static int pipe_rw(int fds, int fdd);
+static void daemon_proc (int sock, int fdtty);
+static void sig_usr1 (int sig);
+static void sig_usr2 (int sig);
+static void sig_quit (int sig);
+static void sig_term (int sig);
+static void sig_int (int sig);
+static int set_telnet_mode (int s);
+static void set_nonblock (int fd);
+static int pipe_rw (int fds, int fdd);
 
-int 
-daemonize(int port, int bg)
+int daemonize (int port, int bg)
 {
 	int sock = 0;
 	struct sockaddr_in serv;
 	int on = 1;
-	int fdtty;	
+	int fdtty;
 	pid_t pid;
-		
-	if (bg) {
-		pid = fork();
-		if (pid < 0) {
-			perror("Daemon fork");
+
+	if (bg)
+	{
+		pid = fork ();
+		if (pid < 0)
+		{
+			perror ("Daemon fork");
 			return (-1);
 		}
 		if (pid > 0)
-			exit(0);
+			exit (0);
 	}
 
 	daemon_port = port;
-	
-	setsid();
-	
+
+	setsid ();
+
 #ifdef cygwin
-	SetConsoleCtrlHandler(handler_routine, TRUE);
+	SetConsoleCtrlHandler (handler_routine, TRUE);
 #endif
 
-	signal(SIGTERM, &sig_term);
-	signal(SIGQUIT, &sig_quit);
-	signal(SIGINT, &sig_int);
-	signal(SIGHUP, SIG_IGN);
-	signal(SIGUSR1, &sig_usr1);
-   	signal(SIGUSR2, &sig_usr2);
-   	signal(SIGCHLD, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
-	
-   	/* open an tty as standard I/O for vpcs */
-   	fdtty_pid = forkpty(&fdtty, NULL, NULL, NULL);
-   	
-   	if (fdtty_pid < 0) {
-   		perror("Daemon fork tty\n");
-   		return (-1);
+	signal (SIGTERM, &sig_term);
+	signal (SIGQUIT, &sig_quit);
+	signal (SIGINT, &sig_int);
+	signal (SIGHUP, SIG_IGN);
+	signal (SIGUSR1, &sig_usr1);
+	signal (SIGUSR2, &sig_usr2);
+	signal (SIGCHLD, SIG_IGN);
+	signal (SIGPIPE, SIG_IGN);
+
+	/* open an tty as standard I/O for vpcs */
+	fdtty_pid = forkpty (&fdtty, NULL, NULL, NULL);
+
+	if (fdtty_pid < 0)
+	{
+		perror ("Daemon fork tty\n");
+		return (-1);
 	}
-	
-   	/* child process, the 'real' vpcs */
-   	if (fdtty_pid == 0) 
-   		return 0;
-   	
-   	set_nonblock(fdtty);
-   	
-   	/* daemon socket */
-   	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sock < 0) {
-		perror("Daemon socket");
+
+	/* child process, the 'real' vpcs */
+	if (fdtty_pid == 0)
+		return 0;
+
+	set_nonblock (fdtty);
+
+	/* daemon socket */
+	sock = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sock < 0)
+	{
+		perror ("Daemon socket");
 		goto err;
 	}
-	(void) setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-	    (char *)&on, sizeof(on));
+	(void) setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, (char *) &on, sizeof (on));
 
-	bzero((char *) &serv, sizeof(serv));
+	bzero ((char *) &serv, sizeof (serv));
 	serv.sin_family = AF_INET;
-	serv.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv.sin_port = htons(port);
-	
-	if (bind(sock, (struct sockaddr *) &serv, sizeof(serv)) < 0) {
-		perror("Daemon bind port");
+	serv.sin_addr.s_addr = htonl (INADDR_ANY);
+	serv.sin_port = htons (port);
+
+	if (bind (sock, (struct sockaddr *) &serv, sizeof (serv)) < 0)
+	{
+		perror ("Daemon bind port");
 		goto err;
 	}
-	if (listen(sock, 5) < 0) {
-		perror("Daemon listen");
+	if (listen (sock, 5) < 0)
+	{
+		perror ("Daemon listen");
 		goto err;
 	}
 
-	daemon_proc(sock, fdtty);
+	daemon_proc (sock, fdtty);
 err:
-	printf("error\n");
+	printf ("error\n");
 	if (sock >= 0)
-		close(sock);
+		close (sock);
 
-	close(fdtty);
-	kill(fdtty_pid, 9);
-	exit(-1);
+	close (fdtty);
+	kill (fdtty_pid, 9);
+	exit (-1);
 }
 
-static int 
-pipe_rw(int fds, int fdd)
+static int pipe_rw (int fds, int fdd)
 {
 	fd_set set;
 	struct timeval tv;
 	int rc, len;
 	int n;
 	u_char buf[512];
-	
+
 	tv.tv_sec = 0;
-	tv.tv_usec = 10 * 1000; 
-	
+	tv.tv_usec = 10 * 1000;
+
 	n = 0;
-	
-	while (1) {
-		FD_ZERO(&set);
-		FD_SET(fds, &set);
-		rc = select(fds + 1, &set, NULL, NULL, &tv);
-		
+
+	while (1)
+	{
+		FD_ZERO (&set);
+		FD_SET (fds, &set);
+		rc = select (fds + 1, &set, NULL, NULL, &tv);
+
 		if (rc < 0)
 			return rc;
-		if (rc == 0) {
+		if (rc == 0)
+		{
 			n++;
 			if (n < 10)
 				continue;
@@ -193,18 +198,18 @@ pipe_rw(int fds, int fdd)
 				return 0;
 		}
 		n = 0;
-		if (FD_ISSET(fds, &set)) {
-			memset(buf, 0, sizeof(buf));	
-			len = read(fds, buf, sizeof(buf));
+		if (FD_ISSET (fds, &set))
+		{
+			memset (buf, 0, sizeof (buf));
+			len = read (fds, buf, sizeof (buf));
 			if (len <= 0)
 				return len;
-			write(fdd, buf, len);
+			write (fdd, buf, len);
 		}
 	}
 }
 
-static void 
-daemon_proc(int sock, int fdtty)
+static void daemon_proc (int sock, int fdtty)
 {
 	char *goodbye = "\r\nGood-bye\r\n";
 	int sock_cli;
@@ -212,48 +217,49 @@ daemon_proc(int sock, int fdtty)
 	int slen;
 	int rc;
 
-	slen = sizeof(cli);
-	while (1) {
+	slen = sizeof (cli);
+	while (1)
+	{
 		cmd_quit = 0;
-		sock_cli = accept(sock, (struct sockaddr *) &cli, (socklen_t *)&slen);
-		if (sock_cli < 0) 
+		sock_cli = accept (sock, (struct sockaddr *) &cli, (socklen_t *) & slen);
+		if (sock_cli < 0)
 			continue;
-		
-		set_telnet_mode(sock_cli);
-		set_nonblock(fdtty);
-		
-		while (!cmd_quit) {
-			if ((rc = pipe_rw(fdtty, sock_cli)) < 0)
+
+		set_telnet_mode (sock_cli);
+		set_nonblock (fdtty);
+
+		while (!cmd_quit)
+		{
+			if ((rc = pipe_rw (fdtty, sock_cli)) < 0)
 				break;
-			rc = pipe_rw(sock_cli, fdtty);
+			rc = pipe_rw (sock_cli, fdtty);
 			/* error */
 			if (rc < 0)
 				break;
 			/* time out */
 			if (rc == 0)
 				continue;
-		}	
-		pipe_rw(fdtty, sock_cli);
-		rc = write(sock_cli, goodbye, strlen(goodbye));
-		close(sock_cli);
+		}
+		pipe_rw (fdtty, sock_cli);
+		rc = write (sock_cli, goodbye, strlen (goodbye));
+		close (sock_cli);
 	}
 }
 
-static void 
-set_nonblock(int fd)
+static void set_nonblock (int fd)
 {
-	int flags = fcntl(fd, F_GETFL, 0);
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+	int flags = fcntl (fd, F_GETFL, 0);
+	fcntl (fd, F_SETFL, flags | O_NONBLOCK);
 }
-	
+
 #ifdef cygwin
 /* to stop VPCS from another process on Windows
  */
-BOOL WINAPI
-handler_routine(DWORD e)
+BOOL WINAPI handler_routine (DWORD e)
 {
-	if (e == CTRL_BREAK_EVENT) {
-		sig_term(21);
+	if (e == CTRL_BREAK_EVENT)
+	{
+		sig_term (21);
 		return TRUE;
 	}
 	return FALSE;
@@ -262,75 +268,64 @@ handler_routine(DWORD e)
 
 /* to stop VPCS from another process
  */
-static void
-sig_term(int sig)
+static void sig_term (int sig)
 {
-	usleep(100000);
-	kill(fdtty_pid, SIGKILL);
+	usleep (100000);
+	kill (fdtty_pid, SIGKILL);
 
-	exit(0);
+	exit (0);
 }
 
 /* should be sent from 'real vpcs' command: disconnect
  */
-static void 
-sig_quit(int sig)
+static void sig_quit (int sig)
 {
 	cmd_quit = 1;
-	signal(SIGQUIT, &sig_quit);
+	signal (SIGQUIT, &sig_quit);
 }
-
 
 /* should be sent from 'real vpcs' command: quit
  * vpcs has exited. 
  */
-static void 
-sig_usr1(int sig)
+static void sig_usr1 (int sig)
 {
-	usleep(100000);
-	kill(fdtty_pid, SIGKILL);
-		
-	exit(0);
+	usleep (100000);
+	kill (fdtty_pid, SIGKILL);
+
+	exit (0);
 }
 
 /* should be sent from hypervisor command: stop or quit 
  */
-static void 
-sig_usr2(int sig)
+static void sig_usr2 (int sig)
 {
 	/* release the resource and save workspace */
-	kill(fdtty_pid, SIGUSR1);
-	
-	usleep(100000);
-	kill(fdtty_pid, SIGKILL);
-	
-	usleep(100000);
-	exit(0);
+	kill (fdtty_pid, SIGUSR1);
+
+	usleep (100000);
+	kill (fdtty_pid, SIGKILL);
+
+	usleep (100000);
+	exit (0);
 }
 
 /* Ctrl+C was pressed */
-static void 
-sig_int(int sig)
+static void sig_int (int sig)
 {
 	ctrl_c = 1;
-	signal(SIGINT, &sig_int);
+	signal (SIGINT, &sig_int);
 }
 
-static int 
-set_telnet_mode(int s)
+static int set_telnet_mode (int s)
 {
 	/* DO echo */
-	char *neg =
-	    "\xFF\xFD\x01"
-	    "\xFF\xFB\x01"
-	    "\xFF\xFD\x03"
-	    "\xFF\xFB\x03";
+	char *neg = "\xFF\xFD\x01" "\xFF\xFB\x01" "\xFF\xFD\x03" "\xFF\xFB\x03";
 	u_char buf[512];
 	int n;
-	
-	n = write(s, neg, strlen(neg));
-	n = read(s, buf, sizeof(buf));
-	
+
+	n = write (s, neg, strlen (neg));
+	n = read (s, buf, sizeof (buf));
+
 	return n;
 }
 

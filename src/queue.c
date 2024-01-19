@@ -30,116 +30,122 @@
 #include <time.h>
 #include "queue.h"
 
-void
-free_pkts(struct packet *m)
+void free_pkts (struct packet *m)
 {
 	struct packet *m0;
-	
-	while (m) {
+
+	while (m)
+	{
 		m0 = m->next;
-		del_pkt(m);
+		del_pkt (m);
 		m = m0;
 	}
 }
 
-void del_pkt(struct packet *m)
+void del_pkt (struct packet *m)
 {
-	free(m);
+	free (m);
 }
 
-struct packet *new_pkt(int len)
+struct packet *new_pkt (int len)
 {
 	struct packet *m = NULL;
-	
-	m = (struct packet *)malloc(len + sizeof(struct packet));
-	if (m != NULL) {
-		memset(m, 0, len + sizeof(struct packet));
+
+	m = (struct packet *) malloc (len + sizeof (struct packet));
+	if (m != NULL)
+	{
+		memset (m, 0, len + sizeof (struct packet));
 		m->len = len;
 		return m;
-	} else
+	}
+	else
 		return NULL;
 }
 
-struct packet *deq_impl(struct pq *pq, int cond)
+struct packet *deq_impl (struct pq *pq, int cond)
 {
 	struct packet *m = NULL;
-	
-	lock_q(pq);
-	
-	if (cond && (pq->q == NULL))
-		pthread_cond_wait(&(pq->cond), &(pq->locker));
 
-	if (pq->q != NULL) {
+	lock_q (pq);
+
+	if (cond && (pq->q == NULL))
+		pthread_cond_wait (&(pq->cond), &(pq->locker));
+
+	if (pq->q != NULL)
+	{
 		m = pq->q;
 		pq->q = pq->q->next;
-		pq->size --;
+		pq->size--;
 		m->next = NULL;
-	}	
-	
-	ulock_q(pq);
+	}
+
+	ulock_q (pq);
 
 	return m;
 }
 
-struct packet *deq(struct pq *pq)
+struct packet *deq (struct pq *pq)
 {
-	return deq_impl(pq, 0);
+	return deq_impl (pq, 0);
 }
 
-struct packet *waitdeq(struct pq *pq)
+struct packet *waitdeq (struct pq *pq)
 {
-	return deq_impl(pq, 1);
+	return deq_impl (pq, 1);
 }
 
-struct packet *enq(struct pq *pq, struct packet *m)
+struct packet *enq (struct pq *pq, struct packet *m)
 {
 	struct packet *q = NULL;
-	
-	if (pq->size == PKTQ_SIZE) {
-		printf("queue is full \n");
+
+	if (pq->size == PKTQ_SIZE)
+	{
+		printf ("queue is full \n");
 		return NULL;
 	}
 
-	lock_q(pq);
+	lock_q (pq);
 
-	gettimeofday(&(m->ts), (void*)0);
-	
+	gettimeofday (&(m->ts), (void *) 0);
+
 	if (pq->q == NULL)
 		pq->q = m;
-	else {
+	else
+	{
 		q = pq->q;
-		while (q->next != NULL) q = q->next;
-		q->next = m;	
+		while (q->next != NULL)
+			q = q->next;
+		q->next = m;
 	}
 
-	while (m) {
-		pq->size ++;
+	while (m)
+	{
+		pq->size++;
 		m = m->next;
 	}
-	pthread_cond_signal(&(pq->cond));
+	pthread_cond_signal (&(pq->cond));
 
-	ulock_q(pq);
-	
+	ulock_q (pq);
+
 	return q;
 }
 
-void init_queue(struct pq *pq)
+void init_queue (struct pq *pq)
 {
-	pthread_mutex_init(&(pq->locker), NULL);
-	pthread_cond_init(&(pq->cond), NULL);
+	pthread_mutex_init (&(pq->locker), NULL);
+	pthread_cond_init (&(pq->cond), NULL);
 	pq->ip = 0;
 	pq->size = 0;
 }
 
-void lock_q(struct pq *pq)
+void lock_q (struct pq *pq)
 {
-	pthread_mutex_lock(&(pq->locker));
+	pthread_mutex_lock (&(pq->locker));
 }
 
-void ulock_q(struct pq *pq)
+void ulock_q (struct pq *pq)
 {
-	pthread_mutex_unlock(&(pq->locker));
+	pthread_mutex_unlock (&(pq->locker));
 }
 
 /* end of file */
-

@@ -24,7 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-#include <stdio.h> 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -33,43 +33,47 @@
 
 #define MAX_LEN  (128)
 
-static int search_pairs(const char *s, char **lf, char **rt);
+static int search_pairs (const char *s, char **lf, char **rt);
 
-char *getkv(char *str)
+char *getkv (char *str)
 {
 	static char buf[MAX_LEN];
 	static char *p;
-	
-	if (str != NULL) {
-		memset(buf, 0, sizeof(buf));
-		strncpy(buf, str, strlen(str));
-		p = strtok(buf, " \t");
-	} else 
-		p = strtok(NULL, " \t");
+
+	if (str != NULL)
+	{
+		memset (buf, 0, sizeof (buf));
+		strncpy (buf, str, strlen (str));
+		p = strtok (buf, " \t");
+	}
+	else
+		p = strtok (NULL, " \t");
 
 	return p;
 }
 
-int mkargv(char *str, char **argv, int max)
+int mkargv (char *str, char **argv, int max)
 {
 	int n = 0;
 	char *p, *q, *es;
 	char **args = argv;
 	char *sep = "=/ \t";
 	static char buf[MAX_LEN];
-	
+
 	if (str == NULL)
 		return n;
-	
-	memset(buf, 0, sizeof(buf));
-	strncpy(buf, str, sizeof(buf) - 1);
-	
+
+	memset (buf, 0, sizeof (buf));
+	strncpy (buf, str, sizeof (buf) - 1);
+
 	p = buf;
-	es = p + strlen(buf);
-	
-	while (p && p < es && n < max) {
-		if (*p == '"') {
-			q = strchr(p + 1, '"');
+	es = p + strlen (buf);
+
+	while (p && p < es && n < max)
+	{
+		if (*p == '"')
+		{
+			q = strchr (p + 1, '"');
 			if (!q)
 				goto ret;
 			*q = '\0';
@@ -79,54 +83,56 @@ int mkargv(char *str, char **argv, int max)
 			p = ++q;
 			continue;
 		}
-		if ((q = strsep(&p, sep)) != NULL) {
+		if ((q = strsep (&p, sep)) != NULL)
+		{
 			/* ignore empty substring */
 			if (*q != '\0')
 				args[n++] = q;
 			continue;
-		} 
+		}
 		break;
 	}
-	
-ret:	
+
+ret:
 	args[n] = NULL;
 	return n;
 }
 
-int insert_argv(int argc, char **argv, char *str)
+int insert_argv (int argc, char **argv, char *str)
 {
 	char *av[20];
 	int i;
-	
+
 	for (i = 0; i < argc; i++)
 		av[i] = argv[i];
-	
+
 	argv[0] = str;
 	for (i = 0; i < argc; i++)
 		argv[i + 1] = av[i];
-	
+
 	return (argc + 1);
 }
 
-int timeout(struct timeval tv, int mseconds)
+int timeout (struct timeval tv, int mseconds)
 {
 	struct timeval tvx;
 	unsigned int usec;
-	
-	gettimeofday(&(tvx), (void*)0);
+
+	gettimeofday (&(tvx), (void *) 0);
 	usec = (tvx.tv_sec - tv.tv_sec) * 1000000 + tvx.tv_usec - tv.tv_usec;
 
-	return ((usec / 1000) >=  mseconds);
+	return ((usec / 1000) >= mseconds);
 }
 
-int digitstring(const char *s)
+int digitstring (const char *s)
 {
 	int i = 0;
-	
+
 	if (s == NULL)
 		return 0;
 
-	while (*s >= '0' && *s <= '9') {
+	while (*s >= '0' && *s <= '9')
+	{
 		s++;
 		i++;
 		if (*s == '\0')
@@ -135,32 +141,34 @@ int digitstring(const char *s)
 	return 0;
 }
 
-char *ttrim(char *s)
+char *ttrim (char *s)
 {
 	int len;
 	int c;
-	
+
 	if (s == NULL)
 		return NULL;
-	len = strlen(s);
+	len = strlen (s);
 	len--;
-	while (len >= 0) {
+	while (len >= 0)
+	{
 		c = s[len];
-		if (!isspace(c))
+		if (!isspace (c))
 			break;
 		len--;
 	}
-	s[len + 1] = '\0';	
-	
+	s[len + 1] = '\0';
+
 	return s;
 }
-int arg2int(const char* arg, int min, int max, int defval)
+
+int arg2int (const char *arg, int min, int max, int defval)
 {
 	int r;
 
-	if (arg == NULL || sscanf(arg, "%d", &r) != 1)
+	if (arg == NULL || sscanf (arg, "%d", &r) != 1)
 		return defval;
-	
+
 	return r;
 }
 
@@ -169,17 +177,18 @@ int arg2int(const char* arg, int min, int max, int defval)
  * Color     {Nword}, N from 1 to 9
 */
 
-void esc_prn(const char *fmt, ...)
+void esc_prn (const char *fmt, ...)
 {
 	va_list ap;
 	char tmp[4096];
 
-	va_start(ap, fmt);
-	vsprintf(tmp, fmt, ap);
-	esc_fprn(stdout, "%s", tmp);
-	va_end(ap);
+	va_start (ap, fmt);
+	vsprintf (tmp, fmt, ap);
+	esc_fprn (stdout, "%s", tmp);
+	va_end (ap);
 }
-void esc_fprn(FILE *f, const char *fmt, ...)
+
+void esc_fprn (FILE * f, const char *fmt, ...)
 {
 	char *buf;
 	char *tmp;
@@ -187,97 +196,102 @@ void esc_fprn(FILE *f, const char *fmt, ...)
 	char *lf, *rt;
 	va_list ap;
 
-	buf = malloc(4096);
+	buf = malloc (4096);
 	if (!buf)
 		return;
-	tmp = malloc(4096);
-	if (!tmp) {
-		free(buf);
+	tmp = malloc (4096);
+	if (!tmp)
+	{
+		free (buf);
 		return;
 	}
-	
-	va_start(ap, fmt);
-	vsprintf(tmp, fmt, ap);
-	va_end(ap);
-	
+
+	va_start (ap, fmt);
+	vsprintf (tmp, fmt, ap);
+	va_end (ap);
+
 	p = tmp;
 	buf[0] = '\0';
-	while (1) {
-		if (search_pairs(p, &lf, &rt) == 0)
+	while (1)
+	{
+		if (search_pairs (p, &lf, &rt) == 0)
 			break;
-		strncat(buf, p, lf - p);
+		strncat (buf, p, lf - p);
 		lf++;
-		switch (*lf) {
-			case 'H':
-				strcat(buf, "\033[1m");
-				break;
-			case 'U':
-				strcat(buf, "\033[4m");
-			default:
-				break;
+		switch (*lf)
+		{
+		case 'H':
+			strcat (buf, "\033[1m");
+			break;
+		case 'U':
+			strcat (buf, "\033[4m");
+		default:
+			break;
 		}
 		lf++;
-		strncat(buf, lf, rt - lf);
-		strcat(buf, "\033[0m");
+		strncat (buf, lf, rt - lf);
+		strcat (buf, "\033[0m");
 		p = rt + 1;
 	}
 
 	if (p)
-		strcat(buf, p);
+		strcat (buf, p);
 
-	fprintf(f, "%s", buf);
-	free(tmp);
-	free(buf);
+	fprintf (f, "%s", buf);
+	free (tmp);
+	free (buf);
 }
 
-static int search_pairs(const char *s, char **lf, char **rt)
+static int search_pairs (const char *s, char **lf, char **rt)
 {
 	char *p, *q, *r;
-	
-	p = strchr(s, '{');
+
+	p = strchr (s, '{');
 	if (!p)
-		return 0;		
-	if (*(p + 1)) {
-		q = strchr(p + 1, '}');
-		r = strchr(p + 1, '{');
+		return 0;
+	if (*(p + 1))
+	{
+		q = strchr (p + 1, '}');
+		r = strchr (p + 1, '{');
 		if (!q)
 			return 0;
-		
-		/* nesting is not allowed */		
+
+		/* nesting is not allowed */
 		if (r && r < q)
 			return 0;
-		
+
 		*lf = p;
 		*rt = q;
-		
+
 		return 1;
 	}
-	
+
 	return 0;
 }
+
 #if 0
-void preh(u_char *e)
+void preh (u_char * e)
 {
 	int i;
-	
+
 	for (i = 0; i < 6; i++)
-		printf("%2.2x ", *(e + i));
+		printf ("%2.2x ", *(e + i));
 	return;
 }
 
 #include <stdarg.h>
-int logs(const char *fmt, ...)
+int logs (const char *fmt, ...)
 {
 	va_list ap;
 	FILE *fp;
 	int ret;
-	
-	fp = fopen("vpcs.log", "a+");
-	va_start(ap, fmt);
-	ret = vfprintf(fp, fmt, ap);
-	va_end(ap);
-	fclose(fp);
-	
+
+	fp = fopen ("vpcs.log", "a+");
+	va_start (ap, fmt);
+	ret = vfprintf (fp, fmt, ap);
+	va_end (ap);
+	fclose (fp);
+
 	return ret;
 }
 #endif

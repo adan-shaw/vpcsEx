@@ -29,7 +29,6 @@
 
 #include <sys/socket.h>
 
-
 #ifndef NS_IN6ADDRSZ
 #define NS_IN6ADDRSZ 16
 #endif
@@ -40,8 +39,8 @@
 #define NS_INADDRSZ 4
 #endif
 
-int vinet_pton6(int af, const char * __restrict src, void * __restrict dst);
-const char *vinet_ntop6(int af, const void *src, char *dst, socklen_t cnt);
+int vinet_pton6 (int af, const char *__restrict src, void *__restrict dst);
+const char *vinet_ntop6 (int af, const void *src, char *dst, socklen_t cnt);
 
 #endif
 

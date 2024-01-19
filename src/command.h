@@ -27,23 +27,23 @@
 #ifndef _CMD_H_
 #define _CMD_H_
 
-int run_dhcp(int argc, char **argv);
-int run_show(int argc, char **argv);
-int run_ping(int argc, char **argv);
-int run_ipconfig(int argc, char **argv);
-int run_tracert(int argc, char **argv);
-int run_set(int argc, char **argv);
-int run_sleep(int argc, char **argv);
-int run_clear(int argc, char **argv);
-int run_echo(int argc, char **argv);
-int run_ver(int argc, char **argv);
-int run_hist(int argc, char **argv);
-int run_remote(int argc, char **argv);
+int run_dhcp (int argc, char **argv);
+int run_show (int argc, char **argv);
+int run_ping (int argc, char **argv);
+int run_ipconfig (int argc, char **argv);
+int run_tracert (int argc, char **argv);
+int run_set (int argc, char **argv);
+int run_sleep (int argc, char **argv);
+int run_clear (int argc, char **argv);
+int run_echo (int argc, char **argv);
+int run_ver (int argc, char **argv);
+int run_hist (int argc, char **argv);
+int run_remote (int argc, char **argv);
 
-int run_load(int argc, char **argv);
-int run_save(int argc, char **argv);
+int run_load (int argc, char **argv);
+int run_save (int argc, char **argv);
 
-const char *ip4Info(const int id);
+const char *ip4Info (const int id);
 
 #endif
 

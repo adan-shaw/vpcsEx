@@ -30,25 +30,26 @@
 #include <termios.h>
 #include "keydef.h"
 
-struct rls {
+struct rls
+{
 	char kb[512];
 	int fdin;
 	int fdout;
-	char *kbuffer;	/* key buffer */
-	int pos; 	/* pointer of key buffer */
+	char *kbuffer;								/* key buffer */
+	int pos;											/* pointer of key buffer */
 	char **history;
-	int hist_total; /* current pointer of the history*/
+	int hist_total;								/* current pointer of the history */
 	char *prompt;
 	int maxbuflen;
 	int maxhistnum;
-	char** (*tab_callback)(const char *string, const char *part);
+	char **(*tab_callback) (const char *string, const char *part);
 };
 
-struct rls *readline_init(int histnum, int buflen);
-void readline_free(struct rls *rls);
+struct rls *readline_init (int histnum, int buflen);
+void readline_free (struct rls *rls);
 
 /* print the prompt, read a command string from the terminal and return it */
-char *readline(const char *prompt, struct rls *rls);
+char *readline (const char *prompt, struct rls *rls);
 
 /* register tab completion callback function
  *
@@ -57,15 +58,15 @@ char *readline(const char *prompt, struct rls *rls);
  *            part, the partial word
  *    return: an array of strings which is a list of completions
  */
-int readline_tab(char** (*cb)(const char *string, const char *part), struct rls *rls);
+int readline_tab (char **(*cb) (const char *string, const char *part), struct rls *rls);
 
-int savehistory(const char *filename, struct rls *rls);
-int loadhistory(const char *filename, struct rls *rls);
+int savehistory (const char *filename, struct rls *rls);
+int loadhistory (const char *filename, struct rls *rls);
 
-void set_terminal(int fd, struct termios *stored_settings);
-void reset_terminal(int fd, struct termios *stored_settings);
+void set_terminal (int fd, struct termios *stored_settings);
+void reset_terminal (int fd, struct termios *stored_settings);
 
-void kbhit(int fd);
+void kbhit (int fd);
 
 #endif
 /* end of file */

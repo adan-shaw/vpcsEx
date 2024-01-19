@@ -26,26 +26,27 @@
 
 #ifndef _DHCP_H_
 #define _DHCP_H_
-                                
+
 #define DHCP_SNAME_LEN          (64)
 #define DHCP_FILE_LEN           (128)
 #define DHCP_OPTION_LEN		(128)
 
-typedef struct dhcp4_packet {
-	char  op;				
-	char  htype;				/* ether:1 */
-	char  hlen;				/* hardware address length:6 */
-	char  hops;				/* number of relay agent, same lan:0 */
-	u_int xid;				/* transaction id */
-	u_short secs;				/* seconds since client start */
-	u_short flags;				/* flags: 0 */
-	u_int ciaddr;				/* client ip */
-	u_int yiaddr;				/* your client ip */
-	u_int siaddr;				/* server ip */
-	u_int giaddr;				/* relay server ip */
-	u_char chaddr[16];			/* client hardware address */
+typedef struct dhcp4_packet
+{
+	char op;
+	char htype;										/* ether:1 */
+	char hlen;										/* hardware address length:6 */
+	char hops;										/* number of relay agent, same lan:0 */
+	u_int xid;										/* transaction id */
+	u_short secs;									/* seconds since client start */
+	u_short flags;								/* flags: 0 */
+	u_int ciaddr;									/* client ip */
+	u_int yiaddr;									/* your client ip */
+	u_int siaddr;									/* server ip */
+	u_int giaddr;									/* relay server ip */
+	u_char chaddr[16];						/* client hardware address */
 	char sname[DHCP_SNAME_LEN];		/* Server name */
-	char file[DHCP_FILE_LEN];		/* file name */
+	char file[DHCP_FILE_LEN];			/* file name */
 	u_char options[DHCP_OPTION_LEN];	/* dummny options */
 } dhcp4_hdr;
 
@@ -80,19 +81,18 @@ typedef struct dhcp4_packet {
 
 #define DHCP4_PSIZE (512)
 
-struct packet * dhcp4_discover(pcs *pc, int renew);
-struct packet * dhcp4_request(pcs *pc);
-struct packet * dhcp4_renew(pcs *pc);
-struct packet * dhcp4_release(pcs *pc);
-int isDhcp4_Offer(pcs *pc, struct packet *m);
-int isDhcp4_packer(pcs *pc, struct packet *m);
+struct packet *dhcp4_discover (pcs * pc, int renew);
+struct packet *dhcp4_request (pcs * pc);
+struct packet *dhcp4_renew (pcs * pc);
+struct packet *dhcp4_release (pcs * pc);
+int isDhcp4_Offer (pcs * pc, struct packet *m);
+int isDhcp4_packer (pcs * pc, struct packet *m);
 
-int dmp_dhcp(pcs *pc, const struct packet *m);
+int dmp_dhcp (pcs * pc, const struct packet *m);
 
-int dhcp_renew(pcs *pc);
-int dhcp_rebind(pcs *pc);
-int dhcp_enq(pcs *pc, const struct packet *m);
-
+int dhcp_renew (pcs * pc);
+int dhcp_rebind (pcs * pc);
+int dhcp_enq (pcs * pc, const struct packet *m);
 
 #endif
 /* end of file */

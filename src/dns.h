@@ -30,7 +30,8 @@
 #include <sys/types.h>
 #include "vpcs.h"
 
-typedef struct {
+typedef struct
+{
 	u_short id;
 	u_short flags;
 	u_short query;
@@ -39,7 +40,8 @@ typedef struct {
 	u_short addition;
 } dnshdr;
 
-typedef struct {
+typedef struct
+{
 	u_char rd:1;
 	u_char tc:1;
 	u_char aa:1;
@@ -52,8 +54,8 @@ typedef struct {
 
 #define MAX_DNS_NAME 64
 
-int hostresolv(pcs *pc, char *name, char *ipstr);
-int dmp_dns_rname(char *s, char *se, char *name);
+int hostresolv (pcs * pc, char *name, char *ipstr);
+int dmp_dns_rname (char *s, char *se, char *name);
 
 #endif
 /* end of file */

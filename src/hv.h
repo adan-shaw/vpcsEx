@@ -50,9 +50,9 @@
 #define DEFAULT_CPORT (30000)
 #define STEP (10)
 
-
 #define MAX_DAEMONS (10)
-struct list {
+struct list
+{
 	pid_t pid;
 	int vport;
 	int vmac;
@@ -61,9 +61,10 @@ struct list {
 	char *cmdline;
 };
 
-typedef struct stub {
+typedef struct stub
+{
 	char *name;
-	int (*f)(int argc, char **argv);
+	int (*f) (int argc, char **argv);
 } cmdStub;
 
 #endif

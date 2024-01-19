@@ -27,13 +27,13 @@
 #ifndef _TCP_H_
 #define _TCP_H_
 
-#define TCP_TIMEOUT 60 /* seconds */
-int tcp_open(pcs *pc, int ipv);
-int tcp_send(pcs *pc, int ipv);
-int tcp_close(pcs *pc, int ipv);
+#define TCP_TIMEOUT 60					/* seconds */
+int tcp_open (pcs * pc, int ipv);
+int tcp_send (pcs * pc, int ipv);
+int tcp_close (pcs * pc, int ipv);
 
-int tcp(pcs *pc, struct packet *m0);
-struct packet *tcpReply(struct packet *m0, sesscb *cb);
+int tcp (pcs * pc, struct packet *m0);
+struct packet *tcpReply (struct packet *m0, sesscb * cb);
 
 #endif
 /* end of file */

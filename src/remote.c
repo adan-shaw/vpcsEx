@@ -43,7 +43,7 @@
 #include "readline.h"
 #include "utils.h"
 
-int open_remote(int fdio, const char *destip, const u_short destport)
+int open_remote (int fdio, const char *destip, const u_short destport)
 {
 	int s;
 	struct sockaddr_in addr_in;
@@ -55,136 +55,138 @@ int open_remote(int fdio, const char *destip, const u_short destport)
 	struct timeval tv;
 	fd_set fset;
 	static FILE *fpio;
-	
-	i = inet_addr(destip);
-	if (i == -1) {
-		printf("Invalid IP address\n");
+
+	i = inet_addr (destip);
+	if (i == -1)
+	{
+		printf ("Invalid IP address\n");
 		return 0;
 	}
-	
-	s = socket(AF_INET, SOCK_STREAM, 0);	
-	
-	if (s == -1) 
+
+	s = socket (AF_INET, SOCK_STREAM, 0);
+
+	if (s == -1)
 		return 0;
-		
-	bzero(&addr_in, sizeof(addr_in));
+
+	bzero (&addr_in, sizeof (addr_in));
 	addr_in.sin_family = AF_INET;
-	addr_in.sin_addr.s_addr = inet_addr(destip);
-	addr_in.sin_port = htons(destport);
-	
-	fpio = fdopen(fdio, "w");
-	
-	rc = connect(s, (struct sockaddr*)&addr_in, sizeof(struct sockaddr));
-	if (rc < 0) {
-		if (errno == EINPROGRESS) {
-			FD_ZERO(&fset);
-			FD_SET(s, &fset);
+	addr_in.sin_addr.s_addr = inet_addr (destip);
+	addr_in.sin_port = htons (destport);
+
+	fpio = fdopen (fdio, "w");
+
+	rc = connect (s, (struct sockaddr *) &addr_in, sizeof (struct sockaddr));
+	if (rc < 0)
+	{
+		if (errno == EINPROGRESS)
+		{
+			FD_ZERO (&fset);
+			FD_SET (s, &fset);
 			tv.tv_sec = 5;
 			tv.tv_usec = 0;
-			rc = select(s + 1, &fset, NULL, NULL, &tv);
-			
-			if (rc > 0 && FD_ISSET(s, &fset)) {
-				i = sizeof(rc);
-				getsockopt(s, SOL_SOCKET, SO_ERROR, 
-				    &rc, (socklen_t *)&i);
+			rc = select (s + 1, &fset, NULL, NULL, &tv);
+
+			if (rc > 0 && FD_ISSET (s, &fset))
+			{
+				i = sizeof (rc);
+				getsockopt (s, SOL_SOCKET, SO_ERROR, &rc, (socklen_t *) & i);
 				if (rc == 0)
 					goto next;
 				if (errno == EINPROGRESS)
-					fprintf(fpio, "Connect timeout\n");
+					fprintf (fpio, "Connect timeout\n");
 				else
-					fprintf(fpio, "Connect failed: %s\n", 
-					    strerror(errno));
-			} else if (rc == 0) 
-				fprintf(fpio, "Connect timeout\n");
+					fprintf (fpio, "Connect failed: %s\n", strerror (errno));
+			}
+			else if (rc == 0)
+				fprintf (fpio, "Connect timeout\n");
 			else
-				fprintf(fpio, "Connect error: %s\n", 
-				    strerror(errno));
-			
-			fflush(fpio);	
-			close(s);
+				fprintf (fpio, "Connect error: %s\n", strerror (errno));
+
+			fflush (fpio);
+			close (s);
 			return 1;
 		}
 	}
-	
+
 next:
-	set_terminal(fdio, &termios);
-	
-	fprintf(fpio, "\r\nConnect %s:%d, press Ctrl+X to quit\r\n", 
-	    destip, destport);
-	fprintf(fpio,
-	    "NOTES: you will be back to the starting point, NOT THE LAST, \r\n"
-	    "       if using Ctrl+X to quit.\r\n");
-	fflush(fpio);
-				
-	while (1) {
+	set_terminal (fdio, &termios);
+
+	fprintf (fpio, "\r\nConnect %s:%d, press Ctrl+X to quit\r\n", destip, destport);
+	fprintf (fpio, "NOTES: you will be back to the starting point, NOT THE LAST, \r\n" "       if using Ctrl+X to quit.\r\n");
+	fflush (fpio);
+
+	while (1)
+	{
 		/* check socket */
 		kb[0] = 0xff;
-		if (write(s, kb, 1) < 0)
+		if (write (s, kb, 1) < 0)
 			break;
-					
-		FD_ZERO(&fset);
-		FD_SET(s, &fset);
-		FD_SET(fdio, &fset);
+
+		FD_ZERO (&fset);
+		FD_SET (s, &fset);
+		FD_SET (fdio, &fset);
 		tv.tv_sec = 5;
 		tv.tv_usec = 0;
-		rc = select((fdio > s) ? (fdio + 1) : (s + 1), &fset, NULL, NULL, &tv);
+		rc = select ((fdio > s) ? (fdio + 1) : (s + 1), &fset, NULL, NULL, &tv);
 		if (rc < 0)
 			break;
 		if (rc == 0)
 			continue;
 
-		if (FD_ISSET(s, &fset)) {
-			rc = read(s, outbuf, sizeof(outbuf));
-			if (rc < 0) 
+		if (FD_ISSET (s, &fset))
+		{
+			rc = read (s, outbuf, sizeof (outbuf));
+			if (rc < 0)
 				break;
-			if (rc > 0) {
+			if (rc > 0)
+			{
 				i = 0;
 				/* discard IAC */
-				while (outbuf[i] == 0xff && i < rc) 
+				while (outbuf[i] == 0xff && i < rc)
 					i += 3;
-				if (i < rc) {
-					rc = write(fdio, outbuf + i, rc - i);
-					if (rc < 0) 
+				if (i < rc)
+				{
+					rc = write (fdio, outbuf + i, rc - i);
+					if (rc < 0)
 						break;
-				 }
+				}
 			}
 		}
 
-		if (FD_ISSET(fdio, &fset)) {
-			rc = read(fdio, kb, sizeof(kb));
-			if (rc < 0) 
+		if (FD_ISSET (fdio, &fset))
+		{
+			rc = read (fdio, kb, sizeof (kb));
+			if (rc < 0)
 				break;
 
 			if (kb[0] == CTRLX)
 				break;
-			
+
 			/* my buddy likes '\r' */
-			if (kb[0] == LF) {
-				rc = write(s, "\r", 1);
-				if (rc < 0) 
+			if (kb[0] == LF)
+			{
+				rc = write (s, "\r", 1);
+				if (rc < 0)
 					break;
 				continue;
 			}
-	
-			if (rc > 0) {
-				rc = write(s, kb, rc);
-				if (rc < 0) 
+
+			if (rc > 0)
+			{
+				rc = write (s, kb, rc);
+				if (rc < 0)
 					break;
 			}
-		}	
+		}
 	}
-	close(s);
-	
-	fprintf(fpio, "\r\nDisconnected from %s:%d\r\n", 
-	    destip, destport);
-	fflush(fpio);
-	
-	
-	
-	reset_terminal(fdio, &termios);
+	close (s);
+
+	fprintf (fpio, "\r\nDisconnected from %s:%d\r\n", destip, destport);
+	fflush (fpio);
+
+	reset_terminal (fdio, &termios);
 
 	return 0;
 }
 
 /* end of file */
-

@@ -30,18 +30,18 @@
 #include <sys/time.h>
 #include <stdarg.h>
 
-char *getkv(char *str);
-int mkargv(char *str, char **argv, int max);
-int insert_argv(int argc, char **argv, char *str);
+char *getkv (char *str);
+int mkargv (char *str, char **argv, int max);
+int insert_argv (int argc, char **argv, char *str);
 
-int timeout(struct timeval tv, int mseconds);
+int timeout (struct timeval tv, int mseconds);
 
-int digitstring(const char *s);
-char *ttrim(char *s);
-void esc_prn(const char *fmt, ...);
-void esc_fprn(FILE *f, const char *fmt, ...);
+int digitstring (const char *s);
+char *ttrim (char *s);
+void esc_prn (const char *fmt, ...);
+void esc_fprn (FILE * f, const char *fmt, ...);
 
-int arg2int(const char* arg, int min, int max, int defalt);
+int arg2int (const char *arg, int min, int max, int defalt);
 
 #endif
 

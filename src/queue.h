@@ -28,26 +28,28 @@
 #define _PKTQ_H_
 
 #include <sys/types.h>
-#include <pthread.h>		
+#include <pthread.h>
 #include <sys/time.h>
 
 #define PKTQ_SIZE	(101)
 
-#define PKT_DROP	0	/* drop it */
-#define PKT_ENQ		1	/* enqueued */
-#define PKT_UP		2	/* application */
+#define PKT_DROP	0							/* drop it */
+#define PKT_ENQ		1							/* enqueued */
+#define PKT_UP		2							/* application */
 
-struct packet {
+struct packet
+{
 	struct packet *next;
 	int len;
 	struct timeval ts;
 	char data[0];
 };
 
-struct pq {
-	int type;				/* for debug */
-	int ip;					/* pointer of the queue */
-	int size;				/* size of queue */
+struct pq
+{
+	int type;											/* for debug */
+	int ip;												/* pointer of the queue */
+	int size;											/* size of queue */
 	pthread_mutex_t locker;
 	pthread_cond_t cond;
 	struct packet *q;
@@ -59,15 +61,15 @@ struct pq {
 	dst->ts = src->ts; \
 }
 
-void init_queue(struct pq*);
-struct packet *enq(struct pq*, struct packet *pkt);
-struct packet *deq(struct pq*);
-struct packet *waitdeq(struct pq *pq);
-void lock_q(struct pq*);
-void ulock_q(struct pq*);
-struct packet *new_pkt(int len);
-void del_pkt(struct packet *m);
-void free_pkts(struct packet *m);
+void init_queue (struct pq *);
+struct packet *enq (struct pq *, struct packet *pkt);
+struct packet *deq (struct pq *);
+struct packet *waitdeq (struct pq *pq);
+void lock_q (struct pq *);
+void ulock_q (struct pq *);
+struct packet *new_pkt (int len);
+void del_pkt (struct packet *m);
+void free_pkts (struct packet *m);
 
 #endif
 

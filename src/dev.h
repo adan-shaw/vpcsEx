@@ -29,13 +29,12 @@
 
 #include "vpcs.h"
 
-int open_dev(int id);
-int open_udp(int port);
-int open_tap(int id);
-int VRead(pcs *pc, void *buf, int len);
-int VWrite(pcs *pc, void *buf, int len);
+int open_dev (int id);
+int open_udp (int port);
+int open_tap (int id);
+int VRead (pcs * pc, void *buf, int len);
+int VWrite (pcs * pc, void *buf, int len);
 
 #endif
 
 /* end of file */
-

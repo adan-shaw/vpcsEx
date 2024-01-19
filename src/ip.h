@@ -38,25 +38,27 @@
 #define IPV6_MMTU    1280
 
 #define ETH_ALEN 6
-#define ETHERTYPE_IP	0x0800	/* IP */
-#define ETHERTYPE_ARP	0x0806	/* Address resolution */
-struct ethdr {
-	u_char  dst[ETH_ALEN];	/* destination eth addr */
-	u_char  src[ETH_ALEN];	/* source ether addr    */
-	u_short type;		/* packet type ID field */
+#define ETHERTYPE_IP	0x0800		/* IP */
+#define ETHERTYPE_ARP	0x0806		/* Address resolution */
+struct ethdr
+{
+	u_char dst[ETH_ALEN];					/* destination eth addr */
+	u_char src[ETH_ALEN];					/* source ether addr    */
+	u_short type;									/* packet type ID field */
 };
 typedef struct ethdr ethdr;
 
-#define ARPHRD_ETHER	1	/* ethernet hardware format */
-#define ARPOP_REQUEST	1	/* request to resolve address */
-#define ARPOP_REPLY	2	/* response to previous request */
+#define ARPHRD_ETHER	1					/* ethernet hardware format */
+#define ARPOP_REQUEST	1					/* request to resolve address */
+#define ARPOP_REPLY	2						/* response to previous request */
 
-struct  arphdr {
-	u_short hrd;			/* format of hardware address */
-	u_short pro;			/* format of protocol address */
-	u_char  hln;			/* length of hardware address */
-	u_char  pln;			/* length of protocol address */
-	u_short op;			/* one of: */
+struct arphdr
+{
+	u_short hrd;									/* format of hardware address */
+	u_short pro;									/* format of protocol address */
+	u_char hln;										/* length of hardware address */
+	u_char pln;										/* length of protocol address */
+	u_short op;										/* one of: */
 	u_char sea[ETH_ALEN];
 	u_char sip[4];
 	u_char dea[ETH_ALEN];
@@ -64,22 +66,23 @@ struct  arphdr {
 };
 typedef struct arphdr arphdr;
 
-struct iphdr {
-	u_int   ihl:4,		/* ip header length, should be 20 bytes */
-			ver:4;	/* version */
-	u_char  tos;		/* type of service */
-	u_short len;		/* ip packet length */
-	u_short id;		/* identification */
-	u_short frag;		/* fragment offset field */
+struct iphdr
+{
+	u_int ihl:4,									/* ip header length, should be 20 bytes */
+	  ver:4;											/* version */
+	u_char tos;										/* type of service */
+	u_short len;									/* ip packet length */
+	u_short id;										/* identification */
+	u_short frag;									/* fragment offset field */
 #define IP_DF 0x4000
 #define IP_MF 0x2000
 #define IP_OFFMASK 0x1fff
-	u_char  ttl;		/* time to live */
+	u_char ttl;										/* time to live */
 #define TTL	64
-	u_char  proto;		/* protocol */
-	u_short cksum;		/* checksum */
-	u_int   sip;
-	u_int   dip;		/* source and dest address */
+	u_char proto;									/* protocol */
+	u_short cksum;								/* checksum */
+	u_int sip;
+	u_int dip;										/* source and dest address */
 };
 typedef struct iphdr iphdr;
 
@@ -88,7 +91,7 @@ typedef struct iphdr iphdr;
 #endif
 
 #ifndef ICMP_ECHO
-#define ICMP_ECHO 8 
+#define ICMP_ECHO 8
 #endif
 #ifndef ICMP_ECHOREPLY
 #define ICMP_ECHOREPLY 0
@@ -111,32 +114,32 @@ typedef struct iphdr iphdr;
 #define ICMP_REDIRECT_NET 0
 #endif
 
-struct icmphdr 
-{ 
-	u_char type;		/* echo or echo reply */
-	u_char code;		/* type sub code */
+struct icmphdr
+{
+	u_char type;									/* echo or echo reply */
+	u_char code;									/* type sub code */
 	u_short cksum;
 	u_short id;
 	u_short seq;
-}; 
+};
 typedef struct icmphdr icmphdr;
 
-struct icmprdr 
-{ 
-	u_char type;		/* echo or echo reply */
-	u_char code;		/* type sub code */
+struct icmprdr
+{
+	u_char type;									/* echo or echo reply */
+	u_char code;									/* type sub code */
 	u_short cksum;
 	u_int ip;
 	u_char data[0];
-}; 
+};
 
 typedef struct icmprdr icmprdr;
 
-struct icmpthdr 
-{ 
+struct icmpthdr
+{
 	icmphdr b;
 	u_int timestamp;
-}; 
+};
 typedef struct icmpthdr icmpthdr;
 
 #ifndef IPPROTO_UDP
@@ -146,24 +149,27 @@ typedef struct icmpthdr icmpthdr;
 #define	IPPROTO_TCP	6
 #endif
 
-struct ipovly {
-	u_char	ih_x1[9];		/* (unused) */
-	u_char	ih_pr;			/* protocol */
-	u_short	ih_len;			/* protocol length */
-	struct	in_addr ih_src;		/* source internet address */
-	struct	in_addr ih_dst;		/* destination internet address */
+struct ipovly
+{
+	u_char ih_x1[9];							/* (unused) */
+	u_char ih_pr;									/* protocol */
+	u_short ih_len;								/* protocol length */
+	struct in_addr ih_src;				/* source internet address */
+	struct in_addr ih_dst;				/* destination internet address */
 };
 
-typedef struct {
+typedef struct
+{
 	u_short sport;
 	u_short dport;
 	u_short len;
 	u_short cksum;
 } udphdr;
 
-struct udpiphdr {
-	struct ipovly	ui_i;		/* overlaid ip structure */
-	udphdr	ui_u;		/* udp header */
+struct udpiphdr
+{
+	struct ipovly ui_i;						/* overlaid ip structure */
+	udphdr ui_u;									/* udp header */
 };
 
 #define	ui_x1		ui_i.ih_x1
@@ -178,20 +184,21 @@ struct udpiphdr {
 
 typedef struct udpiphdr udpiphdr;
 
-struct tcphdr {
-	u_short	th_sport;		/* source port */
-	u_short	th_dport;		/* destination port */
-	u_int	th_seq;			/* sequence number */
-	u_int	th_ack;			/* acknowledgement number */
+struct tcphdr
+{
+	u_short th_sport;							/* source port */
+	u_short th_dport;							/* destination port */
+	u_int th_seq;									/* sequence number */
+	u_int th_ack;									/* acknowledgement number */
 #if BYTE_ORDER == LITTLE_ENDIAN
-	u_int	th_x2:4,		/* (unused) */
-		th_off:4;		/* data offset */
+	u_int th_x2:4,								/* (unused) */
+	  th_off:4;										/* data offset */
 #endif
 #if BYTE_ORDER == BIG_ENDIAN
-	u_int	th_off:4,		/* data offset */
-		th_x2:4;		/* (unused) */
+	u_int th_off:4,								/* data offset */
+	  th_x2:4;										/* (unused) */
 #endif
-	u_char	th_flags;
+	u_char th_flags;
 #define	TH_FIN	0x01
 #define	TH_SYN	0x02
 #define	TH_RST	0x04
@@ -203,15 +210,16 @@ struct tcphdr {
 #define	TH_FLAGS	(TH_FIN|TH_SYN|TH_RST|TH_PUSH|TH_ACK|TH_URG|TH_ECE|TH_CWR)
 #define	PRINT_TH_FLAGS	"\20\1FIN\2SYN\3RST\4PUSH\5ACK\6URG\7ECE\10CWR"
 
-	u_short	th_win;			/* window */
-	u_short	th_sum;			/* checksum */
-	u_short	th_urp;			/* urgent pointer */
+	u_short th_win;								/* window */
+	u_short th_sum;								/* checksum */
+	u_short th_urp;								/* urgent pointer */
 };
 
 typedef struct tcphdr tcphdr;
-struct tcpiphdr {
-	struct	ipovly ti_i;		/* overlaid ip structure */
-	struct	tcphdr ti_t;		/* tcp header */
+struct tcpiphdr
+{
+	struct ipovly ti_i;						/* overlaid ip structure */
+	struct tcphdr ti_t;						/* tcp header */
 };
 typedef struct tcpiphdr tcpiphdr;
 #define	ti_x1		ti_i.ih_x1
@@ -229,7 +237,6 @@ typedef struct tcpiphdr tcpiphdr;
 #define	ti_win		ti_t.th_win
 #define	ti_sum		ti_t.th_sum
 #define	ti_urp		ti_t.th_urp
-
 
 #define TCPOPT_MAXSEG           2
 #define TCPOLEN_MAXSEG          4
@@ -256,11 +263,13 @@ typedef struct tcpiphdr tcpiphdr;
 
 #define ETHERTYPE_IPV6	0x86DD	/* IP */
 
-typedef struct {
-	union {
-		u_char	_a8[16];
-		u_short	_a16[8];
-		u_int	_a32[4];
+typedef struct
+{
+	union
+	{
+		u_char _a8[16];
+		u_short _a16[8];
+		u_int _a32[4];
 	} uaddr;
 } ip6;
 #define addr8 uaddr._a8
@@ -269,18 +278,21 @@ typedef struct {
 
 #define IN6_IS_MULTICAST(a)	((a)->addr8[0] == 0xff)
 
-typedef struct {
-	union {
-		struct ip6_hdrctl {
-			u_int ip6_un1_flow;	/* 20 bits of flow-ID */
-			u_short ip6_un1_plen;	/* payload length */
-			u_char  ip6_un1_nxt;	/* next header */
-			u_char  ip6_un1_hlim;	/* hop limit */
+typedef struct
+{
+	union
+	{
+		struct ip6_hdrctl
+		{
+			u_int ip6_un1_flow;				/* 20 bits of flow-ID */
+			u_short ip6_un1_plen;			/* payload length */
+			u_char ip6_un1_nxt;				/* next header */
+			u_char ip6_un1_hlim;			/* hop limit */
 		} ip6_un1;
-		u_char ip6_un2_vfc;	/* 4 bits version, top 4 bits class */
+		u_char ip6_un2_vfc;					/* 4 bits version, top 4 bits class */
 	} ip6_ctlun;
-	ip6 src;	/* source address */
-	ip6 dst;	/* destination address */
+	ip6 src;											/* source address */
+	ip6 dst;											/* destination address */
 } ip6hdr;
 
 #define ip6_vfc		ip6_ctlun.ip6_un2_vfc
@@ -308,61 +320,65 @@ typedef struct {
 			((s)->addr32[0] == 0) && \
 			((s)->addr32[0] == 0))
 
-typedef struct {
+typedef struct
+{
 	u_int8_t nxt;
 	u_int8_t len;
 } ip6eh;
 
-struct ip6frag {
-	u_int8_t  nxt;		/* next header */
-	u_int8_t  reserved;	/* reserved field */
-	u_int16_t offlg;	/* 13 bits offset */
-	u_int32_t ident;	/* identification */
+struct ip6frag
+{
+	u_int8_t nxt;									/* next header */
+	u_int8_t reserved;						/* reserved field */
+	u_int16_t offlg;							/* 13 bits offset */
+	u_int32_t ident;							/* identification */
 };
 
 #define IPV6_SFRAG_OFFSET(p, o) (p)->offlg =  htons((ntohs((p)->offlg) & ~0x1fff) + ((o) & 0x1fff))
 
-#define IP6F_OFF_MASK           0xf8ff  /* mask out offset from _offlg */
-#define IP6F_RESERVED_MASK      0x0600  /* reserved bits in ip6f_offlg */
-#define IP6F_MORE_FRAG          0x0100  /* more-fragments flag */
+#define IP6F_OFF_MASK           0xf8ff	/* mask out offset from _offlg */
+#define IP6F_RESERVED_MASK      0x0600	/* reserved bits in ip6f_offlg */
+#define IP6F_MORE_FRAG          0x0100	/* more-fragments flag */
 
 #ifndef IPPROTO_FRAGMENT
 #define IPPROTO_FRAGMENT 44
 #endif
 
 #ifndef IPPROTO_AH
-#define IPPROTO_AH 51		/* only for check ehdr, its length is */
+#define IPPROTO_AH 51						/* only for check ehdr, its length is */
 #endif
 
 #ifndef IPV6_MMTU
 #define IPV6_MMTU	1280
 #endif
 
-typedef struct {
-	u_int8_t	type;	/* type field */
-	u_int8_t	code;	/* code field */
-	u_int16_t	cksum;	/* checksum field */
-	union {
-		u_int32_t	icmp6_un_data32[1]; /* type-specific field */
-		u_int16_t	icmp6_un_data16[2]; /* type-specific field */
-		u_int8_t	icmp6_un_data8[4];  /* type-specific field */
+typedef struct
+{
+	u_int8_t type;								/* type field */
+	u_int8_t code;								/* code field */
+	u_int16_t cksum;							/* checksum field */
+	union
+	{
+		u_int32_t icmp6_un_data32[1];	/* type-specific field */
+		u_int16_t icmp6_un_data16[2];	/* type-specific field */
+		u_int8_t icmp6_un_data8[4];	/* type-specific field */
 	} icmp6_dataun;
 } icmp6hdr;
 
 #define icmp6_data32 icmp6_dataun.icmp6_un_data32
 #define icmp6_data16 icmp6_dataun.icmp6_un_data16
 #define icmp6_data8  icmp6_dataun.icmp6_un_data8
-#define icmp6_pptr	icmp6_data32[0]		/* parameter prob */
-#define icmp6_mtu	icmp6_data32[0]		/* packet too big */
-#define icmp6_id	icmp6_data16[0]		/* echo request/reply */
-#define icmp6_seq	icmp6_data16[1]		/* echo request/reply */
+#define icmp6_pptr	icmp6_data32[0]	/* parameter prob */
+#define icmp6_mtu	icmp6_data32[0]	/* packet too big */
+#define icmp6_id	icmp6_data16[0]	/* echo request/reply */
+#define icmp6_seq	icmp6_data16[1]	/* echo request/reply */
 
 #ifndef IPPROTO_ICMP
 #define IPPROTO_ICMP 1
 #endif
 
 #ifndef ICMP_ECHO
-#define ICMP_ECHO 8 
+#define ICMP_ECHO 8
 #endif
 #ifndef ICMP_ECHOREPLY
 #define ICMP_ECHOREPLY 0
@@ -388,10 +404,10 @@ typedef struct {
 #define ICMP6_ECHO_REPLY		129	/* echo reply */
 #endif
 #ifndef ICMP6_DST_UNREACH
-#define ICMP6_DST_UNREACH		1	/* dest unreachable, codes: */
+#define ICMP6_DST_UNREACH		1		/* dest unreachable, codes: */
 #endif
 #ifndef ICMP6_PACKET_TOO_BIG
-#define ICMP6_PACKET_TOO_BIG            2       /* packet too big */
+#define ICMP6_PACKET_TOO_BIG            2	/* packet too big */
 #endif
 #ifndef ICMP6_TIME_EXCEEDED
 #define ICMP6_TIME_EXCEEDED		3	/* time exceeded, code: */
@@ -400,17 +416,18 @@ typedef struct {
 #define ICMP6_DST_UNREACH_NOPORT	4	/* port unreachable */
 #endif
 
-typedef struct tcpcb6 {
+typedef struct tcpcb6
+{
 	u_int timeout;
-	ip6	sip;
+	ip6 sip;
 	ip6 dip;
 	u_int sport;
 	u_int dport;
 	u_int ack;
 	u_int seq;
 	u_short winsize;
-	u_char	flags;  /* my flags */
-	u_char	rflags; /* remote tcp flags */
+	u_char flags;									/* my flags */
+	u_char rflags;								/* remote tcp flags */
 } tcpcb6;
 
 #ifndef ND_ROUTER_SOLICIT
@@ -418,15 +435,17 @@ typedef struct tcpcb6 {
 #define ND_ROUTER_ADVERT		134	/* router advertisement */
 #define ND_NEIGHBOR_SOLICIT		135	/* neighbor solicitation */
 #define ND_NEIGHBOR_ADVERT		136	/* neighbor advertisement */
-#define ND_REDIRECT			137	/* redirect */
+#define ND_REDIRECT			137			/* redirect */
 #endif
 
-typedef struct {
+typedef struct
+{
 	icmp6hdr hdr;
 	ip6 target;
 } ndhdr;
 
-typedef struct {
+typedef struct
+{
 	u_char type;
 	u_char len;
 	u_char mac[6];
@@ -434,10 +453,11 @@ typedef struct {
 #define nd_na_flags	hdr.icmp6_data32[0]
 #define ND_NA_FLAG_OVERRIDE		0x20
 
-typedef struct {
-	icmp6hdr	hdr;
-	u_int		reachable;
-	u_int		retransmit;
+typedef struct
+{
+	icmp6hdr hdr;
+	u_int reachable;
+	u_int retransmit;
 } ndrahdr;
 
 #define nd_ra_curhoplimit	hdr.icmp6_data8[0]
@@ -452,9 +472,10 @@ typedef struct {
 #define DMP_ALL    0x80
 #define DMP_FILE   0x1000
 
-struct packet; /* defined in queue.h */
+struct packet;									/* defined in queue.h */
 
-typedef struct sesscb {
+typedef struct sesscb
+{
 	int sock;
 	u_int timeout;
 	u_int sn;
@@ -478,11 +499,11 @@ typedef struct sesscb {
 	u_int rack;
 	u_int rseq;
 	u_short winsize;
-	u_char	flags;  /* my flags */
-	u_char	rflags; /* remote tcp flags */
+	u_char flags;									/* my flags */
+	u_char rflags;								/* remote tcp flags */
 	u_char ttl;
 	u_char rttl;
-	u_short rmss; /* TCP MSS */
+	u_short rmss;									/* TCP MSS */
 	int aproto;
 	u_char icmptype;
 	u_char icmpcode;
@@ -491,26 +512,26 @@ typedef struct sesscb {
 	char *data;
 } sesscb;
 
-void encap_ehead(char *mbuf, const u_char *sea, const u_char *dea, const u_short type);
-void swap_ehead(char *mbuf);
+void encap_ehead (char *mbuf, const u_char * sea, const u_char * dea, const u_short type);
+void swap_ehead (char *mbuf);
 
-u_short cksum(register unsigned short *buffer, register int size);
-u_short cksum_fixup(u_short cksum, u_short old, u_short new, u_short udp);
-u_short cksum6(ip6hdr *ip, u_char nxt, int len);
+u_short cksum (register unsigned short *buffer, register int size);
+u_short cksum_fixup (u_short cksum, u_short old, u_short new, u_short udp);
+u_short cksum6 (ip6hdr * ip, u_char nxt, int len);
 
-int etherIsZero(u_char *mac);
-int etherIsMulticast(u_char *mac);
+int etherIsZero (u_char * mac);
+int etherIsMulticast (u_char * mac);
 
-int sameNet(u_long ip1, u_long ip2, int cidr);
-int sameNet6(char *s, char *d, int cidr);
+int sameNet (u_long ip1, u_long ip2, int cidr);
+int sameNet6 (char *s, char *d, int cidr);
 
-void swap_ip6head(struct packet *m);
+void swap_ip6head (struct packet *m);
 
-int getCIDR(u_long mask);
+int getCIDR (u_long mask);
 
-const char *icmpTypeCode2String(int ipv, u_int8_t type, u_int8_t code);
+const char *icmpTypeCode2String (int ipv, u_int8_t type, u_int8_t code);
 
-char *ip6tostr(const u_char *ip6);
+char *ip6tostr (const u_char * ip6);
 
 #define PRINT_MAC(x) \
     printf("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x", (x)[0], (x)[1], (x)[2], (x)[3], (x)[4], (x)[5]);

@@ -33,11 +33,10 @@
 #define CTRL6  30
 #define CTRL7  31
 
-#define BACKSP0		8			/* backspace */
-#define BACKSP1		127			/* backspace */  
+#define BACKSP0		8							/* backspace */
+#define BACKSP1		127						/* backspace */
 #define LF		10
 #define CR		13
-
 
 /* escape seqence */
 #define ESC		27

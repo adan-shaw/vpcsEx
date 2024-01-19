@@ -54,18 +54,15 @@ static pthread_mutex_t frag6link_locker;
 	(n)->next = frag6link_head;	\
 	frag6link_head = (n);		\
 } while (0);
-	
 
-static struct packet *defrag6(struct packet **m0);
+static struct packet *defrag6 (struct packet **m0);
 
-void
-init_ip6frag(void)
+void init_ip6frag (void)
 {
 	LIST_LOCK_INIT;
 }
 
-struct packet *
-ipfrag6(struct packet *m0, int mtu)
+struct packet *ipfrag6 (struct packet *m0, int mtu)
 {
 	struct packet *m = NULL, *mh = NULL;
 	ip6hdr *ip = NULL, *ip0 = NULL;
@@ -74,9 +71,9 @@ ipfrag6(struct packet *m0, int mtu)
 	int nfrags;
 	u_int32_t frgid;
 	u_int8_t nxt;
-	
-	ip0 = (ip6hdr *)(m0->data + sizeof(ethdr));
-	
+
+	ip0 = (ip6hdr *) (m0->data + sizeof (ethdr));
+
 	/*         |<-- plen ..................................-->|
 	 * | ethdr | ip6hdr | data ...............................|
 	 *                  | frag1 | frag2 | ..... ......| fragn | 
@@ -89,46 +86,49 @@ ipfrag6(struct packet *m0, int mtu)
 	 * ...
 	 * | ethdr | ip6hdr | ip6frag | fragn |
 	 *
-	*/
-	plen = ntohs(ip0->ip6_plen) + sizeof(ip6hdr);
+	 */
+	plen = ntohs (ip0->ip6_plen) + sizeof (ip6hdr);
 	if (plen <= mtu)
 		return m0;
-	
-	eilen = sizeof(ethdr) + sizeof(ip6hdr);
-	hlen = sizeof(ip6hdr) + sizeof(ip6frag);
-	ehlen = sizeof(ethdr) + hlen;
+
+	eilen = sizeof (ethdr) + sizeof (ip6hdr);
+	hlen = sizeof (ip6hdr) + sizeof (ip6frag);
+	ehlen = sizeof (ethdr) + hlen;
 	dlen = (mtu - hlen) & ~7;
 
 	off = eilen + dlen;
-	frgid = rand();
-	
+	frgid = rand ();
+
 	nxt = ip0->ip6_nxt;
 	mh = m0;
 	last = 0;
-	for (nfrags = 1, last = 0; off < plen; off += dlen, nfrags++) {
-		if (off + dlen >= plen) {
+	for (nfrags = 1, last = 0; off < plen; off += dlen, nfrags++)
+	{
+		if (off + dlen >= plen)
+		{
 			last = 1;
-			clen = plen - dlen * nfrags - sizeof(ip6hdr);
-		} else
+			clen = plen - dlen * nfrags - sizeof (ip6hdr);
+		}
+		else
 			clen = dlen;
-	
-		m = new_pkt(ehlen + clen);
-		if (m == NULL) 
+
+		m = new_pkt (ehlen + clen);
+		if (m == NULL)
 			goto ipfrag6_err;
 
 		/* ether, ip head, frag exthead, payload */
-		memcpy(m->data, m0->data, sizeof(ethdr) + sizeof(ip6hdr));
-		memcpy(m->data + ehlen, m0->data + off, dlen);
-		ip = (ip6hdr *)(m->data + sizeof(ethdr));
-		
+		memcpy (m->data, m0->data, sizeof (ethdr) + sizeof (ip6hdr));
+		memcpy (m->data + ehlen, m0->data + off, dlen);
+		ip = (ip6hdr *) (m->data + sizeof (ethdr));
+
 		ip->ip6_nxt = IPPROTO_FRAGMENT;
-		ip->ip6_plen = htons(clen + sizeof(ip6frag));
-		ip6frag = (struct ip6frag *)(ip + 1);
+		ip->ip6_plen = htons (clen + sizeof (ip6frag));
+		ip6frag = (struct ip6frag *) (ip + 1);
 		ip6frag->nxt = nxt;
 		ip6frag->reserved = 0;
-		ip6frag->offlg = htons((u_short)((off - eilen) & ~7));
+		ip6frag->offlg = htons ((u_short) ((off - eilen) & ~7));
 		ip6frag->ident = frgid;
-		
+
 		if (!last)
 			ip6frag->offlg |= IP6F_MORE_FRAG;
 
@@ -136,134 +136,141 @@ ipfrag6(struct packet *m0, int mtu)
 		mh->next = m;
 		mh = m;
 	}
-	
-	m = new_pkt(ehlen + dlen);
+
+	m = new_pkt (ehlen + dlen);
 	if (!m)
 		goto ipfrag6_err;
-	memcpy(m->data, m0->data + sizeof(ethdr) + sizeof(ip6hdr), dlen);
+	memcpy (m->data, m0->data + sizeof (ethdr) + sizeof (ip6hdr), dlen);
 
 	dlen = (mtu - hlen) & ~7;
 	ip0->ip6_nxt = 44;
-	ip0->ip6_plen = htons(dlen + sizeof(ip6frag));
+	ip0->ip6_plen = htons (dlen + sizeof (ip6frag));
 
-	ip6frag = (struct ip6frag *)(ip0 + 1);
+	ip6frag = (struct ip6frag *) (ip0 + 1);
 	ip6frag->nxt = nxt;
 	ip6frag->reserved = 0;
 	ip6frag->offlg = 0;
 	ip6frag->offlg |= IP6F_MORE_FRAG;
 	ip6frag->ident = frgid;
-	memcpy(m0->data + ehlen, m->data, dlen);
+	memcpy (m0->data + ehlen, m->data, dlen);
 	m0->len = ehlen + dlen;
-	
+
 	return m0;
-	
+
 ipfrag6_err:
-	for (m = mh->next; m; m = mh) {
+	for (m = mh->next; m; m = mh)
+	{
 		mh = m->next;
-		del_pkt(m);
+		del_pkt (m);
 	}
 
 	return m0;
 }
 
-struct packet *
-ipreass6(struct packet *m)
+struct packet *ipreass6 (struct packet *m)
 {
-	ethdr *eh = (ethdr *)(m->data);
-	ip6hdr *ip = (ip6hdr *)(eh + 1);
+	ethdr *eh = (ethdr *) (m->data);
+	ip6hdr *ip = (ip6hdr *) (eh + 1);
 	ip6hdr *ip0;
 	struct frag6link *nq;
 	struct ip6frag *fg = NULL, *fg0 = NULL;
 	struct packet *m0 = NULL, *m2 = NULL;
 	u_short off, off0;
 	int hoff;
-	
+
 	if (ip->ip6_plen == 0)
 		return m;
-	
-	hoff = ip6ehdr(ip, m->len - sizeof(ethdr), IPPROTO_FRAGMENT);
+
+	hoff = ip6ehdr (ip, m->len - sizeof (ethdr), IPPROTO_FRAGMENT);
 	if (hoff == 0)
 		return m;
-	
-	fg = (struct ip6frag *)((char *)ip + hoff);
-	off = ntohs((fg->offlg & IP6F_OFF_MASK));
-	
+
+	fg = (struct ip6frag *) ((char *) ip + hoff);
+	off = ntohs ((fg->offlg & IP6F_OFF_MASK));
+
 	LIST_LOCK;
-	LIST_FOREACH(nq) {
-		if (time_tick - nq->expired > 30) {
-			free_pkts(nq->m);
-			FREE_NODE(nq);
+	LIST_FOREACH (nq)
+	{
+		if (time_tick - nq->expired > 30)
+		{
+			free_pkts (nq->m);
+			FREE_NODE (nq);
 			continue;
 		}
-		if (fg->ident != nq->id || 
-		    fg->nxt != nq->proto ||
-		    !IP6EQ(&ip->src, &nq->sip) || 
-		    !IP6EQ(&ip->dst, &nq->dip)) {
+		if (fg->ident != nq->id || fg->nxt != nq->proto || !IP6EQ (&ip->src, &nq->sip) || !IP6EQ (&ip->dst, &nq->dip))
+		{
 			continue;
 		}
 
-		if ((fg->offlg & IP6F_MORE_FRAG) && 
-		    (fg->offlg & IP6F_OFF_MASK) == 0) {
+		if ((fg->offlg & IP6F_MORE_FRAG) && (fg->offlg & IP6F_OFF_MASK) == 0)
+		{
 			nq->flags |= FF_HEAD;
-		}else if ((fg->offlg & IP6F_MORE_FRAG) == 0)
+		}
+		else if ((fg->offlg & IP6F_MORE_FRAG) == 0)
 			nq->flags |= FF_TAIL;
-		
+
 		/* find a position and insert */
 		m2 = NULL;
-		for (m0 = nq->m; m0; m2 = m0, m0 = m0->next) {
-			ip0 = (ip6hdr *)(m0->data + sizeof(ethdr));
-			hoff = ip6ehdr(ip0, m->len - sizeof(ethdr), 
-			    IPPROTO_FRAGMENT);
-			
+		for (m0 = nq->m; m0; m2 = m0, m0 = m0->next)
+		{
+			ip0 = (ip6hdr *) (m0->data + sizeof (ethdr));
+			hoff = ip6ehdr (ip0, m->len - sizeof (ethdr), IPPROTO_FRAGMENT);
+
 			if (hoff == 0)
 				return m;
-	
-			fg0 = (struct ip6frag *)((char *)ip0 + hoff);
-			
-			off0 = ntohs((fg0->offlg & IP6F_OFF_MASK));
+
+			fg0 = (struct ip6frag *) ((char *) ip0 + hoff);
+
+			off0 = ntohs ((fg0->offlg & IP6F_OFF_MASK));
 			if (off0 > off)
-				break;	
+				break;
 		}
-		if (m2) {
+		if (m2)
+		{
 			m->next = m2->next;
 			m2->next = m;
-		} else {
+		}
+		else
+		{
 			m->next = nq->m;
 			nq->m = m;
 		}
-				
+
 		nq->nfrags++;
 		/* too many fragments */
-		if (nq->nfrags > 16) {
-			free_pkts(nq->m);
-			FREE_NODE(nq);
+		if (nq->nfrags > 16)
+		{
+			free_pkts (nq->m);
+			FREE_NODE (nq);
 			goto ret_null;
 		}
 		/* the head and tail are arrived, scan the chain 
 		 * Note: overlap is invalid here.
 		 */
-		if (nq->flags == (FF_TAIL | FF_HEAD)) {
+		if (nq->flags == (FF_TAIL | FF_HEAD))
+		{
 			m = nq->m;
-			FREE_NODE(nq);
-			m = defrag6(&m);
+			FREE_NODE (nq);
+			m = defrag6 (&m);
 			goto ret;
-		} else
+		}
+		else
 			goto ret_null;
 	}
-	
+
 	/* new fragment */
-	nq = (struct frag6link *)malloc(sizeof(struct frag6link));
+	nq = (struct frag6link *) malloc (sizeof (struct frag6link));
 	if (!nq)
 		goto ret;
 
-	memset(nq, 0, sizeof(struct frag6link));
-	
+	memset (nq, 0, sizeof (struct frag6link));
+
 	nq->expired = time_tick;
 	nq->nfrags = 1;
 	nq->proto = fg->nxt;
 	nq->id = fg->ident;
-	memcpy(nq->sip.addr8, ip->src.addr8, sizeof(ip->src.addr8));
-	memcpy(nq->dip.addr8, ip->dst.addr8, sizeof(ip->dst.addr8));
+	memcpy (nq->sip.addr8, ip->src.addr8, sizeof (ip->src.addr8));
+	memcpy (nq->dip.addr8, ip->dst.addr8, sizeof (ip->dst.addr8));
 	nq->m = m;
 	m->next = NULL;
 
@@ -271,8 +278,8 @@ ipreass6(struct packet *m)
 		nq->flags = FF_HEAD;
 	else if ((fg->offlg & IP6F_MORE_FRAG) == 0)
 		nq->flags = FF_TAIL;
-	
-	ADD_NODE(nq);
+
+	ADD_NODE (nq);
 
 ret_null:
 	LIST_UNLOCK;
@@ -283,7 +290,7 @@ ret:
 	return m;
 }
 
-struct packet *defrag6(struct packet **m0)
+struct packet *defrag6 (struct packet **m0)
 {
 	struct packet *m, *mh, *m2;
 	struct ip6frag *fg = NULL;
@@ -294,41 +301,43 @@ struct packet *defrag6(struct packet **m0)
 
 	/* calculate the payload size */
 	mh = *m0;
-	ip = (ip6hdr *)(mh->data + sizeof(ethdr));
-	hoff = ip6ehdr(ip, mh->len - sizeof(ethdr), IPPROTO_FRAGMENT);
-	doff = hoff + sizeof(struct ip6frag);
-	fg = (struct ip6frag *)((char *)ip + hoff);
+	ip = (ip6hdr *) (mh->data + sizeof (ethdr));
+	hoff = ip6ehdr (ip, mh->len - sizeof (ethdr), IPPROTO_FRAGMENT);
+	doff = hoff + sizeof (struct ip6frag);
+	fg = (struct ip6frag *) ((char *) ip + hoff);
 	nxt = fg->nxt;
-	
+
 	len = 0;
-	while (mh) {
-		ip = (ip6hdr *)(mh->data + sizeof(ethdr));
-		len = len + ntohs(ip->ip6_plen) + sizeof(ip6hdr) - doff;
-		
+	while (mh)
+	{
+		ip = (ip6hdr *) (mh->data + sizeof (ethdr));
+		len = len + ntohs (ip->ip6_plen) + sizeof (ip6hdr) - doff;
+
 		mh = mh->next;
 	}
 
-	m = new_pkt(len + hoff + sizeof(ethdr));
+	m = new_pkt (len + hoff + sizeof (ethdr));
 	if (m == NULL)
 		return *m0;
 
 	/* copy the first header */
 	mh = *m0;
-	memcpy(m->data, mh->data, hoff + sizeof(ethdr));
-	ip = (ip6hdr *)(m->data + sizeof(ethdr));
+	memcpy (m->data, mh->data, hoff + sizeof (ethdr));
+	ip = (ip6hdr *) (m->data + sizeof (ethdr));
 	ip->ip6_nxt = nxt;
-	ip->ip6_plen = htons(len + hoff - sizeof(ip6hdr));
-	off = hoff + sizeof(ethdr);
-	
+	ip->ip6_plen = htons (len + hoff - sizeof (ip6hdr));
+	off = hoff + sizeof (ethdr);
+
 	/* copy the payload */
-	while (mh) {
-		ip = (ip6hdr *)(mh->data + sizeof(ethdr));
-		len = ntohs(ip->ip6_plen) + sizeof(ip6hdr) - doff;
-		memcpy(m->data + off, mh->data + sizeof(ethdr) + doff, len);
+	while (mh)
+	{
+		ip = (ip6hdr *) (mh->data + sizeof (ethdr));
+		len = ntohs (ip->ip6_plen) + sizeof (ip6hdr) - doff;
+		memcpy (m->data + off, mh->data + sizeof (ethdr) + doff, len);
 		off += len;
 		m2 = mh;
 		mh = mh->next;
-		del_pkt(m2);
+		del_pkt (m2);
 	}
 	return m;
 }

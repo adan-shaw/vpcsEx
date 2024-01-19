@@ -33,24 +33,24 @@
 
 #include "ip.h"
 
-struct fraglink {
+struct fraglink
+{
 	struct fraglink *prev;
 	struct fraglink *next;
-	u_int  expired;
-	u_int  flags:4,         /* first and last fragments */
-	       nfrags:4;        /* count of fragments */
+	u_int expired;
+	u_int flags:4,								/* first and last fragments */
+	  nfrags:4;										/* count of fragments */
 #define FF_HEAD 1
 #define FF_TAIL  2
-	u_char  proto;            /* protocol of this fragment */
-	u_short id;           /* sequence id for reassembly */
+	u_char proto;									/* protocol of this fragment */
+	u_short id;										/* sequence id for reassembly */
 	u_int sip;
 	u_int dip;
-	struct packet *m;          /* to ip headers of fragments */
+	struct packet *m;							/* to ip headers of fragments */
 };
 
-
-void init_ipfrag(void);
-struct packet *ipfrag(struct packet *m0, int mtu);
-struct packet *ipreass(struct packet *m);
+void init_ipfrag (void);
+struct packet *ipfrag (struct packet *m0, int mtu);
+struct packet *ipreass (struct packet *m);
 
 #endif

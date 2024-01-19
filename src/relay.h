@@ -30,9 +30,9 @@
 #include <sys/types.h>
 #include "vpcs.h"
 
-int run_relay(int argc, char **argv);
-void *pth_relay(void *dummy);
-void save_relay(FILE *fp);
+int run_relay (int argc, char **argv);
+void *pth_relay (void *dummy);
+void save_relay (FILE * fp);
 
 #endif
 /* end of file */
