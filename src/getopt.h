@@ -49,10 +49,15 @@ extern int optind;
 extern int opterr;
 extern int optopt;
 
-#ifndef FreeBSD
+//linux 不需要getopt() 特殊照顾, freebsd 需要, 这里将#ifndef 改为#ifdef (否则linux 编译不通过)
+//如果freebsd 也更新了getopt() 函数, 那么这一句可以完全删掉(整个#ifndef 删掉)
+#ifdef FreeBSD
 int getopt(int argc, char** argv, char* optstr);
 #endif
+
 int arg_to_int(const char* arg, int min, int max, int defalt);
+
+
 
 #ifdef __cplusplus
 }
