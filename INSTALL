@@ -6,3 +6,17 @@ Options:
  i386 or 32, generate code for 32bit
  amd64 or 64, generate code for 64bit
 
+
+
+demo:
+	# for debug
+	mk.sh debug
+
+	# for release
+	mk.sh amd64
+
+	# for cleaning
+	mk.sh clean
+
+	# point out which arch you want
+	mk.sh amd64 debug
