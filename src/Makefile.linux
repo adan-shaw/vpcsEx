@@ -28,7 +28,8 @@ OBJS=vpcs.o \
 	hv.o \
 	frag.o \
 	frag6.o
-	
+
+debug: 
 all: vpcs
 
 vpcs: $(OBJS)
