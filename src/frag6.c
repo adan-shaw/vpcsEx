@@ -263,7 +263,7 @@ struct packet *ipreass6 (struct packet *m)
 	if (!nq)
 		goto ret;
 
-	memset (nq, 0, sizeof (struct frag6link));
+	//memset (nq, 0, sizeof (struct frag6link));
 
 	nq->expired = time_tick;
 	nq->nfrags = 1;

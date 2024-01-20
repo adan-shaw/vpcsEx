@@ -145,12 +145,12 @@ struct rls *readline_init (int histnum, int buflen)
 	rls = malloc (sizeof (struct rls));
 	while (rls != NULL)
 	{
-		memset (rls, 0, sizeof (struct rls));
+		//memset (rls, 0, sizeof (struct rls));
 
 		p = malloc ((histnum + 2) * buflen);
 		if (p == NULL)
 			break;
-		memset (p, 0, (histnum + 2) * buflen);
+		//memset (p, 0, (histnum + 2) * buflen);
 		rls->kbuffer = p;
 
 		rls->history = malloc (histnum * sizeof (char *));
@@ -203,7 +203,7 @@ int _readline (struct rls *rls)
 	if (isatty (rls->fdin))
 		set_terminal (rls->fdin, &termios);
 
-	memset (rls->kbuffer, 0, rls->maxbuflen);
+	//memset (rls->kbuffer, 0, rls->maxbuflen);
 	rls->pos = 0;
 	histmode = 0;
 	ihist = 0;
@@ -213,7 +213,7 @@ int _readline (struct rls *rls)
 	{
 		if (off >= rc)
 		{
-			memset (kb, 0, sizeof (rls->kb));
+			//memset (kb, 0, sizeof (rls->kb));
 			rc = read (rls->fdin, kb, sizeof (rls->kb));
 			if (rc <= 0)
 				continue;
@@ -256,7 +256,7 @@ int _readline (struct rls *rls)
 				while (i-- > 0)
 					vprint (rls->fdout, "\b \b", 3);
 
-				memset (rls->kbuffer, 0, rls->maxbuflen);
+				//memset (rls->kbuffer, 0, rls->maxbuflen);
 				strcpy (rls->kbuffer, rls->history[ihist]);
 
 				rls->pos = strlen (rls->kbuffer);
@@ -276,7 +276,7 @@ int _readline (struct rls *rls)
 						vprint (rls->fdout, " ", 1);
 					while (i-- > 0)
 						vprint (rls->fdout, "\b \b", 3);
-					memset (rls->kbuffer, 0, rls->maxbuflen);
+					//memset (rls->kbuffer, 0, rls->maxbuflen);
 					rls->pos = 0;
 					histmode = 0;
 					continue;
@@ -293,7 +293,7 @@ int _readline (struct rls *rls)
 				while (i-- > 0)
 					vprint (rls->fdout, "\b \b", 3);
 
-				memset (rls->kbuffer, 0, rls->maxbuflen);
+				//memset (rls->kbuffer, 0, rls->maxbuflen);
 				strcpy (rls->kbuffer, rls->history[ihist]);
 
 				rls->pos = strlen (rls->kbuffer);
@@ -598,7 +598,7 @@ char **my_complete (const char *string, const char *part)
 	if (matches == NULL)
 		return NULL;
 
-	memset (matches, 0, 20 * sizeof (char *));
+	//memset (matches, 0, 20 * sizeof (char *));
 	i = j = 0;
 	if (part != NULL)
 	{

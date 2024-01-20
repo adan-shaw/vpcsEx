@@ -426,7 +426,7 @@ int isDhcp4_packer (pcs * pc, struct packet *m)
 
 	if (dh->xid == pc->ip4.dhcp.xid && dh->op == 2)
 	{
-		memset (&(pc->ip4.dhcp), 0, sizeof (pc->ip4.dhcp));
+		//memset (&(pc->ip4.dhcp), 0, sizeof (pc->ip4.dhcp));
 
 		pc->ip4.dhcp.svr = ip->sip;
 		memcpy (pc->ip4.dhcp.smac, eh->src, 6);
@@ -496,7 +496,7 @@ int isDhcp4_packer (pcs * pc, struct packet *m)
 				}
 				else if (*p == DHO_DOMAIN)
 				{
-					memset (pc->ip4.dhcp.domain, 0, sizeof (pc->ip4.dhcp.domain));
+					//memset (pc->ip4.dhcp.domain, 0, sizeof (pc->ip4.dhcp.domain));
 					memcpy (pc->ip4.dhcp.domain, p + 2, *(p + 1));
 					strcpy (pc->ip4.domain, pc->ip4.dhcp.domain);
 					p += *(p + 1) + 2;

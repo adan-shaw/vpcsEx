@@ -94,8 +94,8 @@ int run_show (int argc, char **argv)
 	struct in_addr in;
 	char buf[128];
 
-	memset (buf, 0, sizeof (buf));
-	memset (buf, ' ', sizeof (buf) - 1);
+	//memset (buf, 0, sizeof (buf));
+	//memset (buf, ' ', sizeof (buf) - 1);
 
 	if (argc > 1)
 	{
@@ -145,8 +145,8 @@ int run_show (int argc, char **argv)
 
 		for (i = 0; i < num_pths; i++)
 		{
-			memset (buf, 0, sizeof (buf));
-			memset (buf, ' ', sizeof (buf) - 1);
+			//memset (buf, 0, sizeof (buf));
+			//memset (buf, ' ', sizeof (buf) - 1);
 
 			if (strcmp (vpc[i].xname, "VPCS") == 0)
 				j = sprintf (buf, "%s%d", vpc[i].xname, i + 1);
@@ -184,8 +184,8 @@ int run_show (int argc, char **argv)
 
 		for (i = 0; i < num_pths; i++)
 		{
-			memset (buf, 0, sizeof (buf));
-			memset (buf, ' ', sizeof (buf) - 1);
+			//memset (buf, 0, sizeof (buf));
+			//memset (buf, ' ', sizeof (buf) - 1);
 			if (strcmp (vpc[i].xname, "VPCS") == 0)
 				j = sprintf (buf, "%s%d", vpc[i].xname, i + 1);
 			else
@@ -822,7 +822,7 @@ static int run_dhcp_new (int renew, int dump)
 		in.s_addr = pc->ip4.ip;
 		PRINT_MAC (mac);
 		printf (" use my ip %s\n", inet_ntoa (in));
-		memset (pc->ipmac4, 0, sizeof (pc->ipmac4));
+		//memset (pc->ipmac4, 0, sizeof (pc->ipmac4));
 		/* clear ip address */
 		pc->ip4.ip = 0;
 		pc->ip4.cidr = 0;
@@ -1119,7 +1119,7 @@ int run_ipconfig (int argc, char **argv)
 		printf ("%s is being used by MAC ", inet_ntoa (in));
 		PRINT_MAC (mac);
 		printf ("\nAddress not changed\n");
-		memset (pc->ipmac4, 0, sizeof (pc->ipmac4));
+		//memset (pc->ipmac4, 0, sizeof (pc->ipmac4));
 		/* clear ip address */
 		pc->ip4.ip = 0;
 		pc->ip4.cidr = 0;
@@ -1685,19 +1685,19 @@ int run_clear (int argc, char **argv)
 	if (!strcmp ("ip", argv[1]))
 	{
 		memcpy (mac, vpc[pcid].ip4.mac, 6);
-		memset (&vpc[pcid].ip4, 0, sizeof (vpc[pcid].ip4));
+		//memset (&vpc[pcid].ip4, 0, sizeof (vpc[pcid].ip4));
 		memcpy (&vpc[pcid].ip4.mac, mac, 6);
 		printf ("IPv4 address/mask, gateway, DNS, and DHCP cleared\n");
 	}
 	else if (!strncmp ("ipv6", argv[1], strlen (argv[1])))
 	{
-		memset (&vpc[pcid].ip6, 0, sizeof (vpc[pcid].ip6));
+		//memset (&vpc[pcid].ip6, 0, sizeof (vpc[pcid].ip6));
 		printf ("IPv6 address/mask and router link-layer address cleared\n");
 	}
 	else if (!strncmp ("arp", argv[1], strlen (argv[1])))
-		memset (&vpc[pcid].ipmac4, 0, sizeof (vpc[pcid].ipmac4));
+		;//memset (&vpc[pcid].ipmac4, 0, sizeof (vpc[pcid].ipmac4));
 	else if (!strncmp ("neighbor", argv[1], strlen (argv[1])))
-		memset (&vpc[pcid].ipmac6, 0, sizeof (vpc[pcid].ipmac6));
+		;//memset (&vpc[pcid].ipmac6, 0, sizeof (vpc[pcid].ipmac6));
 	else if (!strncmp ("hist", argv[1], strlen (argv[1])))
 		clear_hist ();
 	else
@@ -1988,8 +1988,8 @@ static int show_ip (int argc, char **argv)
 	{
 		if (!strncmp (argv[2], "all", strlen (argv[2])))
 		{
-			memset (buf, 0, sizeof (buf));
-			memset (buf, ' ', sizeof (buf) - 1);
+			//memset (buf, 0, sizeof (buf));
+			//memset (buf, ' ', sizeof (buf) - 1);
 			j = sprintf (buf, "NAME");
 			buf[j] = ' ';
 			j = sprintf (buf + 7, "IP/MASK");
@@ -2003,8 +2003,8 @@ static int show_ip (int argc, char **argv)
 
 			for (i = 0; i < num_pths; i++)
 			{
-				memset (buf, 0, sizeof (buf));
-				memset (buf, ' ', sizeof (buf) - 1);
+				//memset (buf, 0, sizeof (buf));
+				//memset (buf, ' ', sizeof (buf) - 1);
 				if (strcmp (vpc[i].xname, "VPCS") == 0)
 					j = sprintf (buf, "%s%d", vpc[i].xname, i + 1);
 				else
@@ -2152,7 +2152,7 @@ int run_load (int argc, char **argv)
 		/* try to open .vpc */
 		if (!strrchr (filename, '.') && (strlen (filename) < PATH_MAX - 5))
 		{
-			memset (fname, 0, PATH_MAX);
+			//memset (fname, 0, PATH_MAX);
 			strncpy (fname, filename, PATH_MAX - 1);
 			strcat (fname, ".vpc");
 			fp = fopen (fname, "r");
@@ -2201,7 +2201,7 @@ int run_save (int argc, char **argv)
 	struct in_addr in;
 	char fname[PATH_MAX];
 
-	memset (fname, 0, PATH_MAX);
+	//memset (fname, 0, PATH_MAX);
 	if (argc > 2 || (argc == 2 && !strcmp (argv[1], "?")))
 	{
 		return help_save (argc, argv);
@@ -2307,7 +2307,7 @@ const char *ip4Info (const int id)
 	static char buf[128];
 	int pos = 0;
 
-	memset (buf, 0, sizeof (buf));
+	//memset (buf, 0, sizeof (buf));
 	if (vpc[id].ip4.ip != 0)
 	{
 		in.s_addr = vpc[id].ip4.ip;

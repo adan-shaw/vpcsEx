@@ -200,7 +200,7 @@ static int pipe_rw (int fds, int fdd)
 		n = 0;
 		if (FD_ISSET (fds, &set))
 		{
-			memset (buf, 0, sizeof (buf));
+			//memset (buf, 0, sizeof (buf));
 			len = read (fds, buf, sizeof (buf));
 			if (len <= 0)
 				return len;

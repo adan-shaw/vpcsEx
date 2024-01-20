@@ -162,7 +162,7 @@ int run_ping6 (int argc, char **argv)
 			{
 				char buf[INET6_ADDRSTRLEN + 1];
 
-				memset (buf, 0, sizeof (buf));
+				//memset (buf, 0, sizeof (buf));
 				vinet_ntop6 (AF_INET6, &pc->mscb.rdip6, buf, INET6_ADDRSTRLEN + 1);
 
 				printf ("*%s %s=%d ttl=%d time=%.3f ms", buf, proto_seq, i++, pc->mscb.rttl, usec / 1000.0);
@@ -274,7 +274,7 @@ int run_ping6 (int argc, char **argv)
 					{
 						char buf[INET6_ADDRSTRLEN + 1];
 
-						memset (buf, 0, sizeof (buf));
+						//memset (buf, 0, sizeof (buf));
 						vinet_ntop6 (AF_INET6, &pc->mscb.rdip6, buf, INET6_ADDRSTRLEN + 1);
 
 						printf ("*%s %s=%d ttl=%d time=%.3f ms", buf, proto_seq, i, pc->mscb.rttl, usec / 1000.0);
@@ -314,7 +314,7 @@ int ipauto6 (void)
 		usleep (10000);
 		if (vpc[pcid].ip6.ip.addr32[0] != 0 || vpc[pcid].ip6.ip.addr32[1] != 0 || vpc[pcid].ip6.ip.addr32[2] != 0 || vpc[pcid].ip6.ip.addr32[3] != 0)
 		{
-			memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, vpc[pcid].ip6.ip.addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 			printf ("GLOBAL SCOPE      : %s/%d\n", buf6, vpc[pcid].ip6.cidr);
@@ -380,7 +380,7 @@ int run_ipset6 (int argc, char **argv)
 			else
 				pc->ip6.type = IP6TYPE_NONE;
 
-			memset (buf, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, pc->ip6.ip.addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 
@@ -513,7 +513,7 @@ int run_tracert6 (int argc, char **argv)
 							char buf[128];
 
 							memcpy (ipaddr.s6_addr, pc->mscb.rdip6.addr8, 16);
-							memset (buf, 0, 128);
+							//memset (buf, 0, 128);
 							vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 							printf ("%s ", buf);
 						}
@@ -532,7 +532,7 @@ int run_tracert6 (int argc, char **argv)
 							char buf[128];
 
 							memcpy (ipaddr.s6_addr, pc->mscb.rdip6.addr8, 16);
-							memset (buf, 0, 128);
+							//memset (buf, 0, 128);
 							vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 							printf ("*%s   %.3f ms (ICMP type:%d, code:%d, %s)\n", buf, usec / 1000.0, pc->mscb.icmptype, pc->mscb.icmpcode, icmpTypeCode2String (6, pc->mscb.icmptype, pc->mscb.icmpcode));
 						}
@@ -561,14 +561,14 @@ int run_show6 (pcs * pc)
 	char buf[INET6_ADDRSTRLEN + 1];
 	struct in6_addr ipaddr;
 
-	memset (buf, 0, INET6_ADDRSTRLEN + 1);
+	//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 	memcpy (ipaddr.s6_addr, pc->link6.ip.addr8, 16);
 	vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 	printf ("       %s/%d\n", buf, pc->link6.cidr);
 
 	if (pc->ip6.ip.addr32[0] != 0 || pc->ip6.ip.addr32[1] != 0 || pc->ip6.ip.addr32[2] != 0 || pc->ip6.ip.addr32[3] != 0)
 	{
-		memset (buf, 0, INET6_ADDRSTRLEN + 1);
+		//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 
 		memcpy (ipaddr.s6_addr, pc->ip6.ip.addr8, 16);
 		vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
@@ -591,7 +591,7 @@ int run_ipdns6 (int argc, char **argv)
 	{
 		if (!strcmp (argv[2], "0"))
 		{
-			memset (pc->ip6.dns[0].addr8, 0, 16);
+			//memset (pc->ip6.dns[0].addr8, 0, 16);
 			return 1;
 		}
 
@@ -607,7 +607,7 @@ int run_ipdns6 (int argc, char **argv)
 	{
 		if (!strcmp (argv[2], "0"))
 		{
-			memset (pc->ip6.dns[0].addr8, 0, 16);
+			//memset (pc->ip6.dns[0].addr8, 0, 16);
 			return 1;
 		}
 
@@ -621,7 +621,7 @@ int run_ipdns6 (int argc, char **argv)
 
 		if (!strcmp (argv[3], "0"))
 		{
-			memset (pc->ip6.dns[1].addr8, 0, 16);
+			//memset (pc->ip6.dns[1].addr8, 0, 16);
 			return 1;
 		}
 		if (vinet_pton6 (AF_INET6, argv[3], &ipaddr) != 1)
@@ -655,7 +655,7 @@ int show_ipv6 (int argc, char **argv)
 			{
 				if (vpc[i].ip6.ip.addr32[0] != 0 || vpc[i].ip6.ip.addr32[1] != 0 || vpc[i].ip6.ip.addr32[2] != 0 || vpc[i].ip6.ip.addr32[3] != 0)
 				{
-					memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+					//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 
 					memcpy (ipaddr.s6_addr, vpc[i].ip6.ip.addr8, 16);
 					vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
@@ -666,8 +666,8 @@ int show_ipv6 (int argc, char **argv)
 				}
 			}
 
-			memset (buf, 0, sizeof (buf));
-			memset (buf, ' ', sizeof (buf) - 1);
+			//memset (buf, 0, sizeof (buf));
+			//memset (buf, ' ', sizeof (buf) - 1);
 			off1 = 7;
 			off2 = off1 + max6 + 2;
 			off3 = off2 + 17 + 2;
@@ -683,15 +683,15 @@ int show_ipv6 (int argc, char **argv)
 
 			for (i = 0; i < num_pths; i++)
 			{
-				memset (buf, 0, sizeof (buf));
-				memset (buf, ' ', sizeof (buf) - 1);
+				//memset (buf, 0, sizeof (buf));
+				//memset (buf, ' ', sizeof (buf) - 1);
 				if (strcmp (vpc[i].xname, "VPCS") == 0)
 					j = sprintf (buf, "%s%d", vpc[i].xname, i + 1);
 				else
 					j = sprintf (buf, "%s", vpc[i].xname);
 				buf[j] = ' ';
 
-				memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+				//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 				memcpy (ipaddr.s6_addr, vpc[i].link6.ip.addr8, 16);
 				vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 				sprintf (buf + 7, "%s/%d", buf6, vpc[i].link6.cidr);
@@ -699,7 +699,7 @@ int show_ipv6 (int argc, char **argv)
 
 				if (vpc[i].ip6.ip.addr32[0] != 0 || vpc[i].ip6.ip.addr32[1] != 0 || vpc[i].ip6.ip.addr32[2] != 0 || vpc[i].ip6.ip.addr32[3] != 0)
 				{
-					memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+					//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 
 					memcpy (ipaddr.s6_addr, vpc[i].ip6.ip.addr8, 16);
 					vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
@@ -748,7 +748,7 @@ int show_ipv6 (int argc, char **argv)
 		printf ("NAME              : %s[%d]\n", vpc[id].xname, id + 1);
 
 		printf ("LINK-LOCAL SCOPE  : ");
-		memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+		//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 		memcpy (ipaddr.s6_addr, vpc[id].link6.ip.addr8, 16);
 		vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 		printf ("%s/%d\n", buf6, vpc[id].link6.cidr);
@@ -757,7 +757,7 @@ int show_ipv6 (int argc, char **argv)
 
 		if (vpc[id].ip6.ip.addr32[0] != 0 || vpc[id].ip6.ip.addr32[1] != 0 || vpc[id].ip6.ip.addr32[2] != 0 || vpc[id].ip6.ip.addr32[3] != 0)
 		{
-			memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, vpc[id].ip6.ip.addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 			printf ("%s/%d", buf6, vpc[id].ip6.cidr);
@@ -766,14 +766,14 @@ int show_ipv6 (int argc, char **argv)
 		printf ("DNS               : ");
 		if (vpc[id].ip6.dns[0].addr32[0] != 0 || vpc[id].ip6.dns[0].addr32[1] != 0 || vpc[id].ip6.dns[0].addr32[2] != 0 || vpc[id].ip6.dns[0].addr32[3] != 0)
 		{
-			memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, vpc[id].ip6.dns[0].addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 			printf ("%s", buf6);
 		}
 		if (vpc[id].ip6.dns[1].addr32[0] != 0 || vpc[id].ip6.dns[1].addr32[1] != 0 || vpc[id].ip6.dns[1].addr32[2] != 0 || vpc[id].ip6.dns[1].addr32[3] != 0)
 		{
-			memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, vpc[id].ip6.dns[1].addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 			printf (" %s", buf6);
@@ -818,7 +818,7 @@ void show_pc_mtu6 (pcs * pc)
 		if (time_tick - pc->ip6mtu[i].timeout > POOL_TIMEOUT)
 			continue;
 
-		memset (buf6, 0, INET6_ADDRSTRLEN + 1);
+		//memset (buf6, 0, INET6_ADDRSTRLEN + 1);
 		memcpy (ipaddr.s6_addr, pc->ip6mtu[i].ip.addr8, 16);
 		vinet_ntop6 (AF_INET6, &ipaddr, buf6, INET6_ADDRSTRLEN + 1);
 
@@ -894,7 +894,7 @@ int run_nb6 (int argc, char **argv)
 			buf[17] = '\0';
 			printf ("%s", buf);
 
-			memset (buf, 0, INET6_ADDRSTRLEN + 1);
+			//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 			memcpy (ipaddr.s6_addr, pc->ipmac6[i].ip.addr8, 16);
 			vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 			printf ("   %s/%d\n", buf, pc->ipmac6[i].cidr);
@@ -948,7 +948,7 @@ const char *ip6Info (const int id)
 
 	if (vpc[id].ip6.ip.addr32[0] != 0 || vpc[id].ip6.ip.addr32[1] != 0 || vpc[id].ip6.ip.addr32[2] != 0 || vpc[id].ip6.ip.addr32[3] != 0)
 	{
-		memset (buf, 0, INET6_ADDRSTRLEN + 1);
+		//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 		memcpy (ipaddr.s6_addr, vpc[id].ip6.ip.addr8, 16);
 		vinet_ntop6 (AF_INET6, &ipaddr, tmp, INET6_ADDRSTRLEN + 1);
 		sprintf (buf, "ip %s/%d", tmp, vpc[id].ip6.cidr);

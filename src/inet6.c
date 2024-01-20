@@ -86,7 +86,7 @@ static const char *vinet_ntop6w (const u_char * src, char *dst, socklen_t size)
 	 *      Copy the input (bytewise) array into a wordwise array.
 	 *      Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset (words, '\0', sizeof words);
+	//memset (words, '\0', sizeof words);
 	for (i = 0; i < NS_IN6ADDRSZ; i++)
 		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
@@ -171,7 +171,7 @@ static int vinet_pton6w (const char *src, u_char * dst)
 	int ch, seen_xdigits;
 	u_int val;
 
-	memset ((tp = tmp), '\0', NS_IN6ADDRSZ);
+	//memset ((tp = tmp), '\0', NS_IN6ADDRSZ);
 	endp = tp + NS_IN6ADDRSZ;
 	colonp = NULL;
 	/* Leading :: requires some special handling. */

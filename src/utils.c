@@ -42,7 +42,7 @@ char *getkv (char *str)
 
 	if (str != NULL)
 	{
-		memset (buf, 0, sizeof (buf));
+		//memset (buf, 0, sizeof (buf));
 		strncpy (buf, str, strlen (str));
 		p = strtok (buf, " \t");
 	}
@@ -63,7 +63,7 @@ int mkargv (char *str, char **argv, int max)
 	if (str == NULL)
 		return n;
 
-	memset (buf, 0, sizeof (buf));
+	//memset (buf, 0, sizeof (buf));
 	strncpy (buf, str, sizeof (buf) - 1);
 
 	p = buf;

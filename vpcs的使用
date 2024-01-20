@@ -1,0 +1,36 @@
+usage: vpcs [OPTIONS] [FILENAME]
+OPTIONS:
+  -h             print this help then exit
+  -v             print version information then exit
+
+  -R             disable relay function
+  -i num         number of vpc instances to start (default is 9)
+  -p port        run as a daemon listening on the tcp port
+  -m num         start byte of ether address, default from 0
+  [-r] FILENAME  load and execute script file FILENAME
+
+  -e             tap mode, using /dev/tapx by default (linux only)
+  [-u]           udp mode, default
+
+udp mode options:
+  -s port        local udp base port, default from 20000
+  -c port        remote udp base port (dynamips udp port), default from 30000
+  -t ip          remote host IP, default 127.0.0.1
+
+tap mode options:
+  -d device      device name, works only when -i is set to 1
+
+hypervisor mode option:
+  -H port        run as the hypervisor listening on the tcp port
+
+  If no FILENAME specified, vpcs will read and execute the file named
+  startup.vpc if it exists in the current directory.
+
+
+
+实际上, 就是一个快速server 启动器, 默认可以最高开启9 个server 实例;
+
+具体使用方法, 不做详细探讨!!
+
+vpcs 一般是直接接入gns3-gui 中, 被gns3-gui 控制的, 你自己使用vpcs 命令去控制vpcs 没意思, 不做深入探讨了;
+

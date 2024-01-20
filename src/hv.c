@@ -161,7 +161,7 @@ int hypervisor (int port)
 	}
 #endif
 
-	memset (vpcs_list, 0, MAX_DAEMONS * sizeof (struct list));
+	//memset (vpcs_list, 0, MAX_DAEMONS * sizeof (struct list));
 
 	if (openpty (&ptyfdm, &ptyfds, NULL, NULL, NULL))
 	{
@@ -217,7 +217,7 @@ static void *pty_master (void *arg)
 
 	while (!cmd_quit)
 	{
-		memset (buf, 0, sizeof (buf));
+		//memset (buf, 0, sizeof (buf));
 		i = read (ptyfdm, buf, sizeof (buf));
 		if (i > 0 && write (sock_cli, buf, i))
 			;
@@ -313,7 +313,7 @@ static void loop (void)
 
 			if (FD_ISSET (sock_cli, &set))
 			{
-				memset (buf, 0, sizeof (buf));
+				//memset (buf, 0, sizeof (buf));
 				i = read (sock_cli, buf, sizeof (buf));
 				if (i < 0)
 					break;
@@ -397,7 +397,7 @@ static int run_vpcs (int ac, char **av)
 		return 0;
 
 	pv = &vpcs_list[i];
-	memset (pv, 0, sizeof (struct list));
+	//memset (pv, 0, sizeof (struct list));
 
 	/* reinitialized, maybe call getopt twice */
 	optind = 1;
@@ -674,7 +674,7 @@ static int run_quit (int ac, char **av)
 		if (i < MAX_DAEMONS)
 		{
 			i = write (sock_cli, warning_quit, strlen (warning_quit));
-			memset (ans, 0, sizeof (ans));
+			//memset (ans, 0, sizeof (ans));
 			i = read (sock_cli, ans, sizeof (ans));
 			if (i <= 0)
 				return 0;

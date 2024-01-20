@@ -257,7 +257,7 @@ static int fmtstring (const char *name, char *buf)
 	if (name == NULL || name[0] == '.' || strstr (name, "..") || !strchr (name, '.') || strlen (name) > MAX_DNS_NAME)
 		return 0;
 
-	memset (buf, 0, MAX_DNS_NAME);
+	//memset (buf, 0, MAX_DNS_NAME);
 	strcpy (buf + 1, name);
 
 	s = buf + 1;
@@ -289,7 +289,7 @@ static int dnsrequest (u_short id, const char *name, int type, char *data, int *
 	int dlen = sizeof (dnshdr);
 	int i;
 
-	memset (&dh, 0, sizeof (dnshdr));
+	//memset (&dh, 0, sizeof (dnshdr));
 	dh.id = id;
 	dh.flags = 0x0001;						/* QR|OC|AA|TC|RD -  RA|Z|RCODE  */
 	dh.query = htons (0x0001);		/* one query */
@@ -297,7 +297,7 @@ static int dnsrequest (u_short id, const char *name, int type, char *data, int *
 	memcpy (data, (void *) &dh, sizeof (dnshdr));
 
 	/* query name */
-	memset (buf, 0, sizeof (buf));
+	//memset (buf, 0, sizeof (buf));
 	i = fmtstring (name, (char *) buf);
 	if (i == 0)
 		return 0;
@@ -485,7 +485,7 @@ int ip2str (u_char * ip, char *str)
 		sprintf (str, "%d.%d.%d.%d", ip[1], ip[2], ip[3], ip[4]);
 	else if (*ip == 16)
 	{
-		memset (buf, 0, sizeof (buf));
+		//memset (buf, 0, sizeof (buf));
 		memcpy (ipaddr.s6_addr, ip + 1, 16);
 		vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 		sprintf (str, "%s", buf);

@@ -448,7 +448,7 @@ void dmp_dns (void *dat)
 			{
 				/* ns */
 				i = j = 0;
-				memset (name, 0, sizeof (name));
+				//memset (name, 0, sizeof (name));
 				q = p + 2;
 				c = *(q + j);
 				while (j < rlen)

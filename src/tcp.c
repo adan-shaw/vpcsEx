@@ -622,7 +622,7 @@ int tcp (pcs * pc, struct packet *m)
 		if (ti->ti_flags == TH_ACK && cb->flags == TH_FIN)
 		{
 			/* clear session */
-			memset (cb, 0, sizeof (sesscb));
+			//memset (cb, 0, sizeof (sesscb));
 		}
 		else
 		{
@@ -815,7 +815,7 @@ int tcp6 (pcs * pc, struct packet *m)
 		if (th->th_flags == TH_ACK && cb->flags == TH_FIN)
 		{
 			/* clear session */
-			memset (cb, 0, sizeof (sesscb));
+			//memset (cb, 0, sizeof (sesscb));
 		}
 		else
 		{

@@ -154,7 +154,7 @@ int main (int argc, char **argv)
 	int daemon_bg = 1;
 	char *cmd;
 
-	memset (&echoctl, 0, sizeof (struct echoctl));
+	//memset (&echoctl, 0, sizeof (struct echoctl));
 	rhost = inet_addr ("127.0.0.1");
 
 	devtype = DEV_UDP;
@@ -251,7 +251,7 @@ int main (int argc, char **argv)
 	init_ipfrag ();
 	init_ip6frag ();
 
-	memset (vpc, 0, MAX_NUM_PTHS * sizeof (pcs));
+	//memset (vpc, 0, MAX_NUM_PTHS * sizeof (pcs));
 	for (i = 0; i < num_pths; i++)
 	{
 		if (pthread_create (&(vpc[i].rpid), NULL, pth_reader, (void *) &i) != 0)
@@ -443,12 +443,12 @@ void parse_cmd (char *cmdstr)
 		}
 
 		/* the session control block */
-		memset (&vpc[pcid].mscb, 0, sizeof (vpc[pcid].mscb));
+		//memset (&vpc[pcid].mscb, 0, sizeof (vpc[pcid].mscb));
 		vpc[pcid].mscb.sock = 1;
 
 		rc = cmd->f (argc, argv);
 
-		memset (&vpc[pcid].mscb, 0, sizeof (vpc[pcid].mscb));
+		//memset (&vpc[pcid].mscb, 0, sizeof (vpc[pcid].mscb));
 
 	}
 	else

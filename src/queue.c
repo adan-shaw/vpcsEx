@@ -54,7 +54,7 @@ struct packet *new_pkt (int len)
 	m = (struct packet *) malloc (len + sizeof (struct packet));
 	if (m != NULL)
 	{
-		memset (m, 0, len + sizeof (struct packet));
+		//memset (m, 0, len + sizeof (struct packet));
 		m->len = len;
 		return m;
 	}

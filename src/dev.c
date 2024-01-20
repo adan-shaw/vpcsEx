@@ -182,7 +182,7 @@ int open_tap (int id)
 	{
 		return (-1);
 	}
-	memset (&ifr, 0, sizeof (ifr));
+	//memset (&ifr, 0, sizeof (ifr));
 
 	/*
 	 * IFF_TAP   - TAP device  

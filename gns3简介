@@ -1,0 +1,81 @@
+gns3 是一个思科设备仿真project, 这个project 已经开源, 因此你可以获取这个仿真项目的所有代码;
+
+gns3 project 包括3 个子项目:
+	* gns3-gui     可视化控制界面(python)
+	* gns3-server  gns3仿真功能服务端, 包括全部仿真功能的描述(python)
+	* gns3-vpcs    为了节约vm 内存消耗, 搞出来的小型网络host, 有基础的网络功能(python)
+
+
+
+
+
+gns3-gui 分析:
+	gns3-gui 只是一个gui 可视化框架, 并没有实现任何实际功能, 
+	实际功能都在gns3-server 中实现, 所有仿真业务处理, 都集中在这个project 中;
+
+	gns3-gui 只负责做用户互交操作, 把用户端的仿真控制信息收集起来, 然后发送到gns3-server;
+	把gns3-server 发送过来的所有业务数据, 通过gui 可视化地呈现在用户面前;
+
+
+
+
+
+gns3-server 分析:
+	gns3-server 包含了所有仿真业务处理, 是整个gns3 project 的中枢;
+	gns3-server 以server 的模式, 通过处理tcp socket 请求发来的仿真业务数据, 处理思科网络设备的仿真业务;
+
+	配置gns3-server, 需要像配置普通server 一样, 需要修改gns3-server.conf 来达到配置目的;
+
+
+
+
+
+gns3-vpcs 分析:
+	由于vbox, vmware 等虚拟机, 非常消耗主机内存, 而且还要另外安装软件, 非常不符合本次gns3 额仿真平台的设计要求;
+	因此, 思科决定写一个小型host 节点仿真PC, 只满足一些简单的功能即可:
+		* host 发现入网
+		* host 报文收发
+		* ping/traceroute
+		* 广播报文(必须, arp 入网时, 会有用到)
+		- 多播报文(非必须的, 这个不一定会实现, 因为仿真器host 不是处理业务的, 不需要多播)
+
+	vbox, vmware 这些节点虚拟机的仿真消耗比较大, 
+	一般使用gns3-vpcs 性能最好, 一台主机只有几MB 的内存消耗, 却能满足基础的host 网络处理, 使这个仿真project 更加完美;
+
+	gns3-vpcs 版本旧, 应该不会影响使用的, 除非gns3 新增了节点仿真功能!!
+	这种情况应该比较少, 所以vpcs-0.8 也应该可以代入的;
+
+
+
+
+
+安装分析:
+	安装时, gns3-gui, gns3-server 都是需要安装的, gns3 会调用gns3-server 中的包, 缺一不可, 仿真业务比较复杂;
+	gns3-vpcs 也是必须的, 否则使用vbox/vmware/物理主机host, 你做网络仿真测试时, 将会非常悲剧, 还是gns3-vpcs 好用;
+
+
+
+
+
+设计分析:
+	gns3-gui, gns3-server, 都是python project, 因为业务比较复杂, 直接使用Python, 实际上更简单, 敏捷开发;
+	只有gns3-vpcs 这种内嵌虚拟host, 才会使用c 编写, 方便压缩单台host 的性能消耗, 这样可以整个仿真平台, 实现大规模网络的仿真, 也是比较必须的;
+	ps:
+		一个子网最少也要有一个host, 否则你没办法查看该子网的入网情况, 报文收发情况;
+		这种情况下, 如果都开虚拟机来仿真, 那么这个网络仿真就做不下去了;
+		内存消耗非常大, 非常卡;
+
+	应该是这样的:
+		gns3-gui(python project):
+			调用gns3-server, gns3-vpcs, 把这两个东西, 当成子模块, 来处理;
+		gns3-server(python project):
+			根据gns3-server.conf 来决定server 参数, 用作相应gns3-gui 的操作请求, gns-server 内部节点之间的数据互交(内部节点包括: gns3-vpcs-host, vbox-host, vmware-host 等)
+		gns3-vpcs(c project):
+			根据命令行参数, 来启动vpcs, 决定启动多少个仿真node;
+
+
+
+
+
+author: adan_shaw@aliyun.com
+2024/01/19 in shanghai

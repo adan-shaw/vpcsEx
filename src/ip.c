@@ -114,7 +114,7 @@ u_short cksum6 (ip6hdr * ip, u_char nxt, int len)
 		} ph;
 	} uph;
 
-	memset (&uph, 0, 8);
+	//memset (&uph, 0, 8);
 	uph.ph.ph_len = htonl (len);
 	uph.ph.ph_nxt = nxt;
 
@@ -339,7 +339,7 @@ char *ip6tostr (const u_char * ip6)
 	struct in6_addr ipaddr;
 	static char buf[INET6_ADDRSTRLEN + 1];
 
-	memset (buf, 0, INET6_ADDRSTRLEN + 1);
+	//memset (buf, 0, INET6_ADDRSTRLEN + 1);
 	memcpy (ipaddr.s6_addr, ip6, 16);
 	vinet_ntop6 (AF_INET6, &ipaddr, buf, INET6_ADDRSTRLEN + 1);
 
